@@ -8,19 +8,25 @@
 
   <style>
     :root{
-      --bg0:#070510; --bg1:#0b0814; --bg2:#120a25;
+      --bg0:#070510;
       --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.70);
+      --muted:rgba(255,255,255,.72);
       --muted2:rgba(255,255,255,.58);
       --stroke:rgba(255,255,255,.14);
       --glass:rgba(255,255,255,.08);
       --glass2:rgba(255,255,255,.05);
-      --accent:#b59bff; --accent2:#ffb3d6; --accent3:#7cf3ff;
+
+      --accent:#b59bff;
+      --accent2:#ffb3d6;
+      --accent3:#7cf3ff;
+
       --shadow:0 18px 55px rgba(0,0,0,.55);
       --max:1120px;
-      --r:18px; --r2:28px;
+      --r:18px;
+      --r2:28px;
       --headerH:72px;
     }
+
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     html{ scroll-behavior:smooth; }
@@ -28,69 +34,83 @@
       margin:0;
       color:var(--text);
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
-      background: linear-gradient(180deg, var(--bg0), var(--bg1) 40%, var(--bg2));
+      background: var(--bg0);
       overflow-x:hidden;
     }
     a{ color:inherit; text-decoration:none; }
     .container{ width:min(var(--max), calc(100% - 40px)); margin:0 auto; }
 
-    /* =========================
-       ✅ FULLSCREEN BACKGROUND (Video + Gradients) with crossfade
-       ========================= */
-    .bg-wrap{
+    /* =========================================
+       ✅ MORPHING BACKGROUND (scroll + mouse)
+       ========================================= */
+    .bg{
       position:fixed;
       inset:0;
-      z-index:-20;
+      z-index:-50;
+      background: radial-gradient(1200px 700px at 70% -10%, rgba(181,155,255,.18), transparent 60%),
+                  radial-gradient(900px 700px at 15% 10%, rgba(124,243,255,.10), transparent 55%),
+                  radial-gradient(900px 600px at 85% 40%, rgba(255,179,214,.08), transparent 60%),
+                  linear-gradient(180deg, #05040c, #070510 35%, #120a25);
       overflow:hidden;
-      background:#05040c;
     }
-    .bg-video{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;
-      transform: scale(1.06);
-      filter: brightness(.62) contrast(1.07) saturate(1.06) blur(1px);
-      opacity:0;
-      transition: opacity 420ms linear;
-      will-change: opacity;
-    }
-    /* gradient layer فوق الفيديو (ويتغير حسب السيكشن) */
-    .bg-grad{
-      position:absolute; inset:-20%;
-      opacity:0;
-      transition: opacity 420ms linear;
-      will-change: opacity;
-      pointer-events:none;
+
+    /* Layer that will morph */
+    .blob{
+      position:absolute;
+      left:50%;
+      top:50%;
+      width: 900px;
+      height: 900px;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
       filter: blur(0px);
-    }
-    /* overlay ثابت للقراءة + شكل premium */
-    .bg-overlay{
-      position:absolute; inset:0;
-      background:
-        radial-gradient(900px 420px at 15% 20%, rgba(124,243,255,.10), transparent 60%),
-        radial-gradient(900px 420px at 85% 25%, rgba(181,155,255,.14), transparent 62%),
-        radial-gradient(900px 420px at 65% 80%, rgba(255,179,214,.09), transparent 62%),
-        linear-gradient(180deg, rgba(7,5,16,.22), rgba(7,5,16,.82));
+      opacity: .95;
+      will-change: transform, width, height, filter, opacity;
+      transition: opacity 220ms linear;
       pointer-events:none;
-      z-index:2;
     }
-    /* نجوم خفيفة */
+
+    /* Secondary blob for depth */
+    .blob2{
+      position:absolute;
+      left:50%;
+      top:50%;
+      width: 600px;
+      height: 600px;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
+      opacity: .80;
+      will-change: transform, width, height, filter, opacity;
+      pointer-events:none;
+    }
+
+    /* Soft vignette for readability */
+    .vignette{
+      position:absolute;
+      inset:-20%;
+      background: radial-gradient(1200px 800px at 50% 30%, rgba(0,0,0,.12), rgba(0,0,0,.72));
+      pointer-events:none;
+      opacity:.95;
+    }
+
+    /* Tiny stars */
     .stars{
-      position:absolute; inset:0;
+      position:absolute;
+      inset:0;
       background:
         radial-gradient(2px 2px at 12% 22%, rgba(255,255,255,.85), transparent 55%),
         radial-gradient(1.5px 1.5px at 26% 74%, rgba(255,255,255,.70), transparent 55%),
         radial-gradient(1px 1px at 65% 30%, rgba(255,255,255,.60), transparent 55%),
         radial-gradient(2px 2px at 82% 58%, rgba(255,255,255,.78), transparent 55%),
         radial-gradient(1px 1px at 52% 48%, rgba(255,255,255,.50), transparent 55%);
-      opacity:.18;
+      opacity:.14;
       pointer-events:none;
-      z-index:3;
+      mix-blend-mode: screen;
     }
 
-    /* =========================
+    /* =========================================
        Header / Nav
-       ========================= */
+       ========================================= */
     header{
       position:fixed; left:0; right:0; top:0;
       height:var(--headerH);
@@ -98,22 +118,14 @@
       display:flex; align-items:center;
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      background: linear-gradient(180deg, rgba(7,5,16,.78), rgba(7,5,16,.22));
+      background: linear-gradient(180deg, rgba(7,5,16,.78), rgba(7,5,16,.18));
       border-bottom:1px solid rgba(255,255,255,.08);
     }
-    .nav{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      direction:ltr;
-    }
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:14px; direction:ltr; }
     .brand{
       display:flex; gap:10px; align-items:center;
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      font-weight:900;
-      font-size:13px;
+      text-transform:uppercase; letter-spacing:.14em;
+      font-weight:900; font-size:13px;
     }
     .brand .dot{
       width:10px; height:10px; border-radius:999px;
@@ -129,28 +141,19 @@
       border:1px solid transparent;
       transition:180ms ease;
     }
-    .links a:hover{
-      color:var(--text);
-      background:rgba(255,255,255,.06);
-      border-color:rgba(255,255,255,.12);
-    }
-    .links a.active{
-      color:var(--text);
-      background:rgba(181,155,255,.12);
-      border-color:rgba(181,155,255,.25);
-    }
+    .links a:hover{ color:var(--text); background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.12); }
+    .links a.active{ color:var(--text); background:rgba(181,155,255,.12); border-color:rgba(181,155,255,.25); }
 
     main{ padding-top:var(--headerH); }
 
-    /* =========================
-       Sections = "scene" feeling like video
-       كل سيكشن تقريباً شاشة كاملة
-       ========================= */
+    /* =========================================
+       Sections – screen-like transitions
+       ========================================= */
     section{
       min-height: calc(100vh - var(--headerH));
       display:flex;
       align-items:center;
-      padding: 84px 0;
+      padding: 86px 0;
       position:relative;
     }
 
@@ -163,13 +166,13 @@
     }
     h1{
       margin:0;
-      font-size:clamp(44px, 6vw, 82px);
-      line-height:.95;
+      font-size:clamp(46px, 6vw, 86px);
+      line-height:.94;
       letter-spacing:-.04em;
     }
     h2{
       margin:0;
-      font-size:clamp(26px, 3.4vw, 44px);
+      font-size:clamp(26px, 3.5vw, 46px);
       letter-spacing:-.02em;
       line-height:1.12;
     }
@@ -178,26 +181,17 @@
       color:var(--muted);
       line-height:1.75;
       font-size:15.5px;
-      max-width:72ch;
+      max-width:74ch;
     }
 
-    /* Glass blocks (مش "غرفة" واحدة) */
-    .panel{
-      border-radius: var(--r2);
-      border:1px solid rgba(255,255,255,.14);
-      background: linear-gradient(180deg, var(--glass), var(--glass2));
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-      padding: 26px;
+    /* Hero: no card */
+    .hero-wrap{
+      max-width: 860px;
     }
 
     .actions{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-top:18px;
-      direction:ltr;
+      display:flex; gap:12px; flex-wrap:wrap;
+      margin-top:18px; direction:ltr;
     }
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
@@ -218,11 +212,8 @@
       border-color: rgba(181,155,255,.35);
     }
 
-    .iconbar{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:16px;
-      direction:ltr;
-    }
+    /* icons */
+    .iconbar{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; direction:ltr; }
     .icon{
       width:40px; height:40px;
       border-radius:999px;
@@ -237,15 +228,25 @@
     .icon:hover{ transform: translateY(-1px); border-color: rgba(181,155,255,.35); }
     .icon svg{ width:18px; height:18px; opacity:.9; }
 
-    /* =========================
-       Projects: 3 cards side-by-side
-       hover/focus => اللي عليه يبرز
-       ========================= */
+    /* glass panels for other sections */
+    .panel{
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, var(--glass), var(--glass2));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      max-width: 920px;
+    }
+
+    /* Projects: hover pop (no click) */
     .proj-grid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
       gap:14px;
       margin-top:16px;
+      direction:ltr;
     }
     .proj{
       border-radius: var(--r);
@@ -271,8 +272,7 @@
       padding:7px 10px;
       border-radius:999px;
     }
-
-    /* Active state (set by JS on hover/focus) */
+    /* active by JS */
     .proj-grid[data-active="0"] .proj:nth-child(1),
     .proj-grid[data-active="1"] .proj:nth-child(2),
     .proj-grid[data-active="2"] .proj:nth-child(3){
@@ -280,7 +280,6 @@
       opacity:1;
       border-color: rgba(181,155,255,.40);
     }
-    /* Non-active fade a bit */
     .proj-grid[data-active="0"] .proj:not(:nth-child(1)),
     .proj-grid[data-active="1"] .proj:not(:nth-child(2)),
     .proj-grid[data-active="2"] .proj:not(:nth-child(3)){
@@ -299,23 +298,21 @@
       section{ padding: 70px 0; }
       .proj-grid{ grid-template-columns: 1fr; }
       .proj-grid[data-active] .proj{ transform:none !important; opacity:1 !important; }
-      .panel{ padding:20px; }
+      .panel{ padding:18px; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      html{ scroll-behavior:auto; }
+      .blob,.blob2{ transition:none; }
     }
   </style>
 </head>
 
 <body>
-  <!-- Background system -->
-  <div class="bg-wrap" aria-hidden="true">
-    <!-- two videos to crossfade -->
-    <video id="bgA" class="bg-video" autoplay muted loop playsinline preload="auto"></video>
-    <video id="bgB" class="bg-video" autoplay muted loop playsinline preload="auto"></video>
-
-    <!-- two gradients to crossfade -->
-    <div id="gA" class="bg-grad"></div>
-    <div id="gB" class="bg-grad"></div>
-
-    <div class="bg-overlay"></div>
+  <!-- Background -->
+  <div class="bg" aria-hidden="true">
+    <div id="blob" class="blob"></div>
+    <div id="blob2" class="blob2"></div>
+    <div class="vignette"></div>
     <div class="stars"></div>
   </div>
 
@@ -335,13 +332,10 @@
   </header>
 
   <main id="top">
-    <!-- Scene 1: skyline as TRUE background -->
-    <section id="hero"
-      data-video="assets/skyline.mp4"
-      data-grad="radial-gradient(900px 420px at 20% 30%, rgba(181,155,255,.16), transparent 60%),
-                radial-gradient(900px 420px at 85% 70%, rgba(124,243,255,.12), transparent 62%)">
+    <!-- HERO (no card) -->
+    <section id="hero" data-scene="0">
       <div class="container">
-        <div class="panel">
+        <div class="hero-wrap">
           <p class="kicker">AI Engineer • NLP • CV • MLOps</p>
           <h1>Malak Hossam</h1>
           <p class="lead">
@@ -374,11 +368,8 @@
       </div>
     </section>
 
-    <!-- Scene 2: different look (gradient-only) -->
-    <section id="about"
-      data-grad="radial-gradient(900px 420px at 20% 20%, rgba(255,179,214,.14), transparent 60%),
-                radial-gradient(900px 420px at 80% 75%, rgba(181,155,255,.14), transparent 62%),
-                linear-gradient(135deg, rgba(255,255,255,.02), rgba(255,255,255,0))">
+    <!-- ABOUT -->
+    <section id="about" data-scene="1">
       <div class="container">
         <div class="panel">
           <p class="kicker">About</p>
@@ -391,31 +382,27 @@
       </div>
     </section>
 
-    <!-- Scene 3 -->
-    <section id="experience"
-      data-grad="radial-gradient(900px 420px at 15% 70%, rgba(124,243,255,.12), transparent 62%),
-                radial-gradient(900px 420px at 85% 30%, rgba(181,155,255,.14), transparent 62%)">
+    <!-- EXPERIENCE -->
+    <section id="experience" data-scene="2">
       <div class="container">
         <div class="panel">
           <p class="kicker">Experience</p>
           <h2>Internships & applied AI work</h2>
           <p class="lead">
-            Prime Softworks (AI Engineer Intern): voice assistant + RAG + FastAPI/Docker/LangChain.
-            Instant Academy: CV/NLP work (ResNet, sentiment tuning).
+            Prime Softworks: voice assistant + RAG + FastAPI/Docker/LangChain.
+            Instant Academy: CV/NLP (ResNet, sentiment tuning).
           </p>
         </div>
       </div>
     </section>
 
-    <!-- Projects: 3 beside each other, hover pops -->
-    <section id="projects"
-      data-grad="radial-gradient(900px 420px at 20% 35%, rgba(181,155,255,.15), transparent 62%),
-                radial-gradient(900px 420px at 85% 65%, rgba(124,243,255,.10), transparent 62%)">
+    <!-- PROJECTS -->
+    <section id="projects" data-scene="3">
       <div class="container">
         <div class="panel">
           <p class="kicker">Projects</p>
-          <h2>Hover to pop (no click)</h2>
-          <p class="lead">اللي تقفي عليه يبقى بارز… ولما تروحي للي جنبه، هو اللي يبرز والباقي يهدى.</p>
+          <h2>Hover to highlight</h2>
+          <p class="lead">اللي تقفي عليه يبقى بارز… وتحسي إنه “جزء من نفس الحركة” في الخلفية.</p>
 
           <div class="proj-grid" id="projGrid" data-active="0">
             <div class="proj" tabindex="0">
@@ -423,27 +410,23 @@
               <p>Fine-tuned on MASAQ with CAMeL Tools; extracted root/POS/case; ~82% accuracy.</p>
               <div class="tags"><span class="tag">NLP</span><span class="tag">AraBART</span></div>
             </div>
-
             <div class="proj" tabindex="0">
               <h3>Arabic Chatbot (LangChain)</h3>
               <p>Intent-aware chatbot with conversation memory; integrates microservices for student Q&A.</p>
               <div class="tags"><span class="tag">Agents</span><span class="tag">Memory</span></div>
             </div>
-
             <div class="proj" tabindex="0">
               <h3>Butterfly Classification (ResNet)</h3>
               <p>ResNet fine-tuned to ~94% using PyTorch + OpenCV.</p>
               <div class="tags"><span class="tag">CV</span><span class="tag">ResNet</span></div>
             </div>
           </div>
-
         </div>
       </div>
     </section>
 
-    <section id="skills"
-      data-grad="radial-gradient(900px 420px at 20% 25%, rgba(255,179,214,.10), transparent 62%),
-                radial-gradient(900px 420px at 80% 75%, rgba(124,243,255,.10), transparent 62%)">
+    <!-- SKILLS -->
+    <section id="skills" data-scene="4">
       <div class="container">
         <div class="panel">
           <p class="kicker">Skills</p>
@@ -453,16 +436,13 @@
       </div>
     </section>
 
-    <section id="contact"
-      data-grad="radial-gradient(900px 420px at 15% 75%, rgba(181,155,255,.14), transparent 62%),
-                radial-gradient(900px 420px at 85% 25%, rgba(124,243,255,.10), transparent 62%)">
+    <!-- CONTACT -->
+    <section id="contact" data-scene="5">
       <div class="container">
         <div class="panel">
           <p class="kicker">Contact</p>
           <h2>Let’s build something</h2>
-          <p class="lead">
-            <a href="mailto:malak.hossam.work@gmail.com">malak.hossam.work@gmail.com</a> • 01204073624
-          </p>
+          <p class="lead"><a href="mailto:malak.hossam.work@gmail.com">malak.hossam.work@gmail.com</a> • 01204073624</p>
           <div class="actions">
             <a class="btn primary" href="mailto:malak.hossam.work@gmail.com">Email me →</a>
             <a class="btn" href="Malak%20AI%20Engineer.pdf" target="_blank" rel="noopener">Open CV</a>
@@ -486,24 +466,6 @@
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // ===== Nav active highlight
-    const navLinks = Array.from(document.querySelectorAll(".links a"));
-    const watchSections = navLinks
-      .map(a => a.getAttribute("href"))
-      .filter(h => h && h.startsWith("#"))
-      .map(id => document.querySelector(id))
-      .filter(Boolean);
-
-    const navObs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        const id = "#" + e.target.id;
-        navLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === id));
-      });
-    }, { rootMargin: "-45% 0px -50% 0px", threshold: 0.01 });
-
-    watchSections.forEach(s => navObs.observe(s));
-
     // ===== Projects hover/focus pop
     const grid = document.getElementById("projGrid");
     if (grid){
@@ -512,126 +474,89 @@
         el.addEventListener("mouseenter", () => grid.dataset.active = String(i));
         el.addEventListener("focus", () => grid.dataset.active = String(i));
       });
-      // default first
       grid.dataset.active = "0";
     }
 
-    // ===== Background crossfade between sections
-    const sections = Array.from(document.querySelectorAll("main section[id]"));
-    const bgA = document.getElementById("bgA");
-    const bgB = document.getElementById("bgB");
-    const gA  = document.getElementById("gA");
-    const gB  = document.getElementById("gB");
+    // ===== Morphing background scenes config
+    // كل Scene = دائرة/بلوب مختلف: مكان + حجم + ألوان
+    const scenes = [
+      // 0 Hero
+      { x: 55, y: 40, size: 860, blur: 0,
+        c1: "rgba(181,155,255,.22)", c2: "rgba(124,243,255,.14)", c3:"rgba(255,179,214,.10)" },
+      // 1 About (circle in center, more obvious)
+      { x: 50, y: 52, size: 980, blur: 0,
+        c1: "rgba(181,155,255,.26)", c2: "rgba(181,155,255,.08)", c3:"rgba(124,243,255,.10)" },
+      // 2 Experience (circle grows more and shifts)
+      { x: 65, y: 55, size: 1180, blur: 0,
+        c1: "rgba(124,243,255,.18)", c2: "rgba(181,155,255,.16)", c3:"rgba(255,179,214,.08)" },
+      // 3 Projects (bigger and centered-ish)
+      { x: 48, y: 58, size: 1320, blur: 0,
+        c1: "rgba(181,155,255,.22)", c2: "rgba(255,179,214,.14)", c3:"rgba(124,243,255,.10)" },
+      // 4 Skills
+      { x: 40, y: 50, size: 1180, blur: 0,
+        c1: "rgba(255,179,214,.14)", c2: "rgba(181,155,255,.16)", c3:"rgba(124,243,255,.10)" },
+      // 5 Contact
+      { x: 55, y: 45, size: 980, blur: 0,
+        c1: "rgba(124,243,255,.14)", c2: "rgba(181,155,255,.18)", c3:"rgba(255,179,214,.10)" },
+    ];
 
-    let activeIsA = true;
-    let curVideo = "";
-    let nextVideo = "";
-    let curGrad = "";
-    let nextGrad = "";
+    const blob  = document.getElementById("blob");
+    const blob2 = document.getElementById("blob2");
+    const sections = Array.from(document.querySelectorAll("main section[data-scene]"));
 
-    function setVid(v, src){
-      if (!src) return;
-      if (v.getAttribute("src") === src) return;
-      v.setAttribute("src", src);
-      v.load();
-      v.play().catch(()=>{});
-    }
-    function setGrad(el, css){
-      if (!css) { el.style.background = ""; return; }
-      el.style.background = css;
-    }
+    // mouse parallax
+    let mx = 0, my = 0;
+    window.addEventListener("mousemove", (e) => {
+      const w = window.innerWidth || 1;
+      const h = window.innerHeight || 1;
+      mx = (e.clientX / w - 0.5);
+      my = (e.clientY / h - 0.5);
+    }, { passive:true });
+
     function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+    function lerp(a,b,t){ return a + (b-a)*t; }
 
-    // init from first section
-    function initBG(){
-      const first = sections[0];
-      curVideo = first?.dataset.video || "";
-      curGrad  = first?.dataset.grad || "";
-      if (curVideo) setVid(bgA, curVideo);
-      setGrad(gA, curGrad);
+    function pickScene(){
+      const vh = window.innerHeight || 1;
+      const center = vh * 0.55;
 
-      bgA.style.opacity = curVideo ? "1" : "0";
-      bgB.style.opacity = "0";
-      gA.style.opacity  = curGrad ? "1" : "0";
-      gB.style.opacity  = "0";
-    }
-
-    function getSceneAndProgress(){
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      const center = vh * 0.50;
-
-      let idx = 0, best = Infinity;
-      sections.forEach((sec, i) => {
+      let bestIdx = 0, bestDist = Infinity;
+      sections.forEach((sec) => {
+        const i = parseInt(sec.dataset.scene, 10);
         const r = sec.getBoundingClientRect();
         const mid = r.top + r.height * 0.5;
         const d = Math.abs(mid - center);
-        if (d < best){ best = d; idx = i; }
+        if (d < bestDist){ bestDist = d; bestIdx = i; }
       });
 
-      const sec = sections[idx];
-      const r = sec.getBoundingClientRect();
-      // fade happens in last 30% of section
-      const start = r.height * 0.70;
+      // progress to next (last ~35% of current section)
+      const curSec = sections.find(s => parseInt(s.dataset.scene,10) === bestIdx) || sections[0];
+      const r = curSec.getBoundingClientRect();
+      const start = r.height * 0.65;
       const inside = clamp(-r.top, 0, r.height);
-      const p = clamp((inside - start) / Math.max(1, (r.height - start)), 0, 1);
-      return { idx, p };
+      const t = clamp((inside - start) / Math.max(1, (r.height - start)), 0, 1);
+
+      return { i: bestIdx, t };
     }
 
-    function updateBG(){
-      if (sections.length === 0) return;
+    function applyBlob(el, s, mouseScale){
+      // blob gradient
+      el.style.background = `
+        radial-gradient(55% 55% at 35% 35%, ${s.c1}, transparent 60%),
+        radial-gradient(55% 55% at 70% 45%, ${s.c2}, transparent 62%),
+        radial-gradient(55% 55% at 45% 75%, ${s.c3}, transparent 65%)
+      `;
 
-      const { idx, p } = getSceneAndProgress();
+      // position + size + mouse parallax
+      const px = s.x + mx * mouseScale;
+      const py = s.y + my * mouseScale;
 
-      const cur = sections[idx];
-      const nxt = sections[Math.min(idx+1, sections.length-1)];
-
-      const curV = cur?.dataset.video || "";
-      const nxtV = nxt?.dataset.video || "";
-      const curG = cur?.dataset.grad || "";
-      const nxtG = nxt?.dataset.grad || "";
-
-      const visV = activeIsA ? bgA : bgB;
-      const hidV = activeIsA ? bgB : bgA;
-      const visG = activeIsA ? gA  : gB;
-      const hidG = activeIsA ? gB  : gA;
-
-      // ensure current loaded in visible layers
-      if (curV !== curVideo){
-        curVideo = curV;
-        if (curVideo) setVid(visV, curVideo);
-      }
-      if (curG !== curGrad){
-        curGrad = curG;
-        setGrad(visG, curGrad);
-      }
-
-      // preload next into hidden
-      if (nxtV !== nextVideo){
-        nextVideo = nxtV;
-        if (nextVideo) setVid(hidV, nextVideo);
-        else hidV.removeAttribute("src");
-      }
-      if (nxtG !== nextGrad){
-        nextGrad = nxtG;
-        setGrad(hidG, nextGrad);
-      }
-
-      // crossfade
-      // video opacity depends if section has video
-      const visVOn = curV ? 1 : 0;
-      const hidVOn = nxtV ? 1 : 0;
-      visV.style.opacity = String((1 - p) * visVOn);
-      hidV.style.opacity = String(p * hidVOn);
-
-      const visGOn = curG ? 1 : 0;
-      const hidGOn = nxtG ? 1 : 0;
-      visG.style.opacity = String((1 - p) * visGOn);
-      hidG.style.opacity = String(p * hidGOn);
-
-      // finalize swap near end
-      if (p > 0.98){
-        activeIsA = !activeIsA;
-      }
+      el.style.width  = s.size + "px";
+      el.style.height = s.size + "px";
+      el.style.left = px + "%";
+      el.style.top  = py + "%";
+      el.style.filter = `blur(${s.blur}px)`;
+      el.style.transform = "translate(-50%, -50%)";
     }
 
     let ticking = false;
@@ -640,15 +565,53 @@
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        updateBG();
+        const { i, t } = pickScene();
+        const s1 = scenes[i] || scenes[0];
+        const s2 = scenes[Math.min(i+1, scenes.length-1)] || s1;
+
+        // interpolate between s1 and s2
+        const s = {
+          x: lerp(s1.x, s2.x, t),
+          y: lerp(s1.y, s2.y, t),
+          size: lerp(s1.size, s2.size, t),
+          blur: lerp(s1.blur, s2.blur, t),
+          c1: t < 0.5 ? s1.c1 : s2.c1,
+          c2: t < 0.5 ? s1.c2 : s2.c2,
+          c3: t < 0.5 ? s1.c3 : s2.c3,
+        };
+
+        // main blob + secondary blob (depth)
+        applyBlob(blob, s, 7.5);
+
+        const sBack = {
+          ...s,
+          size: s.size * 0.68,
+        };
+        applyBlob(blob2, sBack, 12);
+
         ticking = false;
       });
     }
 
-    window.addEventListener("scroll", onScroll, { passive:true });
+    // also animate with mouse even without scroll (light)
+    function tickMouse(){
+      if (reduceMotion) return;
+      onScroll(); // reuse interpolation result
+      requestAnimationFrame(tickMouse);
+    }
 
-    initBG();
-    updateBG();
+    onScroll();
+    tickMouse();
+    window.addEventListener("scroll", onScroll, { passive:true });
+    window.addEventListener("resize", onScroll);
+
+    // If reduced motion: set a static scene
+    if (reduceMotion){
+      applyBlob(blob, scenes[0], 0);
+      applyBlob(blob2, { ...scenes[0], size: scenes[0].size * 0.68 }, 0);
+      blob.style.opacity = "1";
+      blob2.style.opacity = "0.85";
+    }
   </script>
 </body>
 </html>
