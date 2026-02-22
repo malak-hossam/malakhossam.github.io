@@ -1,11 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#070510" />
   <title>Malak Hossam — AI Engineer</title>
-  <meta name="description" content="Malak Hossam — AI Engineer portfolio (NLP • CV • MLOps)" />
 
   <style>
     :root{
@@ -33,18 +32,67 @@
     body{
       margin:0;
       color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
       background: linear-gradient(180deg, var(--bg0), var(--bg1) 35%, var(--bg2));
       overflow-x:hidden;
     }
     a{ color:inherit; text-decoration:none; }
     .container{ width:min(var(--max), calc(100% - 40px)); margin:0 auto; }
 
-    /* ===== Fixed Parallax Background (REAL parallax while scrolling) ===== */
+    /* =========================================================
+       ✅ FULLSCREEN LIVE PHOTO BACKGROUND (crossfade)
+       ========================================================= */
+    .bg-video-wrap{
+      position:fixed;
+      inset:0;
+      z-index:-10;
+      overflow:hidden;
+      background:#05040c;
+    }
+
+    .bg-video{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform: scale(1.06);
+      filter: brightness(.62) contrast(1.07) saturate(1.06) blur(1px);
+      opacity:1;
+      transition: opacity 240ms linear;
+      will-change: opacity;
+    }
+
+    /* Overlay فوق الفيديو علشان النص يبقى مقروء + شكل premium */
+    .bg-video-overlay{
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(900px 450px at 20% 20%, rgba(124,243,255,.12), transparent 60%),
+        radial-gradient(900px 450px at 80% 25%, rgba(181,155,255,.16), transparent 62%),
+        radial-gradient(900px 450px at 60% 80%, rgba(255,179,214,.10), transparent 62%),
+        linear-gradient(180deg, rgba(7,5,16,.35), rgba(7,5,16,.82));
+      pointer-events:none;
+    }
+
+    /* Optional: very subtle grain */
+    .grain{
+      position:absolute;
+      inset:-20%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      opacity:.06;
+      mix-blend-mode: overlay;
+      pointer-events:none;
+      transform: rotate(2deg);
+    }
+
+    /* =========================================================
+       Parallax shapes (خفيفة) فوق الفيديو (اختياري)
+       ========================================================= */
     .bg-parallax{
       position:fixed;
       inset:-20vh -10vw -20vh -10vw;
-      z-index:-3;
+      z-index:-9;
       pointer-events:none;
       transform: translateZ(0);
     }
@@ -54,6 +102,7 @@
       will-change: transform;
       transform: translate3d(0,0,0);
       filter: drop-shadow(0 45px 90px rgba(0,0,0,.55));
+      opacity:.9;
     }
     .bg-stars{
       background:
@@ -62,34 +111,20 @@
         radial-gradient(1px 1px at 65% 30%, rgba(255,255,255,.65), transparent 55%),
         radial-gradient(2px 2px at 80% 60%, rgba(255,255,255,.80), transparent 55%),
         radial-gradient(1px 1px at 52% 48%, rgba(255,255,255,.55), transparent 55%);
-      opacity:.40;
+      opacity:.30;
       filter:none;
     }
     .bg-glow{
       background:
-        radial-gradient(700px 320px at 20% 15%, rgba(124,243,255,.18), transparent 62%),
-        radial-gradient(800px 360px at 75% 10%, rgba(181,155,255,.26), transparent 65%),
-        radial-gradient(700px 380px at 70% 70%, rgba(255,179,214,.16), transparent 65%);
-      opacity:.95;
-    }
-    .bg-mountains{
-      background:
-        radial-gradient(900px 450px at 20% 75%, rgba(181,155,255,.22), transparent 64%),
-        radial-gradient(900px 450px at 75% 80%, rgba(124,243,255,.16), transparent 62%),
-        linear-gradient(180deg, transparent 45%, rgba(0,0,0,.38));
-      clip-path: polygon(0 70%, 14% 62%, 26% 72%, 40% 58%, 52% 74%, 66% 60%, 80% 74%, 92% 62%, 100% 70%, 100% 100%, 0 100%);
-      opacity:.95;
-    }
-    .bg-hills{
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
-        radial-gradient(800px 300px at 28% 88%, rgba(255,179,214,.14), transparent 65%),
-        radial-gradient(800px 300px at 74% 88%, rgba(181,155,255,.14), transparent 65%);
-      clip-path: polygon(0 78%, 15% 70%, 30% 82%, 46% 68%, 62% 83%, 78% 72%, 100% 80%, 100% 100%, 0 100%);
-      opacity:.98;
+        radial-gradient(800px 380px at 20% 15%, rgba(124,243,255,.10), transparent 62%),
+        radial-gradient(900px 420px at 75% 10%, rgba(181,155,255,.14), transparent 65%),
+        radial-gradient(800px 420px at 70% 70%, rgba(255,179,214,.10), transparent 65%);
+      opacity:.9;
     }
 
-    /* ===== Header / Nav ===== */
+    /* =========================================================
+       Header / Nav
+       ========================================================= */
     header{
       position:fixed;
       left:0; right:0; top:0;
@@ -105,6 +140,7 @@
       align-items:center;
       justify-content:space-between;
       gap:14px;
+      direction:ltr; /* نخلي اللوجو واللينكات ترتيبهم مظبوط */
     }
     .brand{
       display:flex; gap:10px; align-items:center;
@@ -143,8 +179,13 @@
 
     main{ padding-top:72px; }
 
-    /* ===== Sections ===== */
-    section{ padding: 84px 0; position:relative; }
+    /* =========================================================
+       Sections
+       ========================================================= */
+    section{
+      padding: 84px 0;
+      position:relative;
+    }
     .kicker{
       margin:0 0 10px;
       font-size:12px;
@@ -167,12 +208,12 @@
     .lead{
       margin:12px 0 0;
       color:var(--muted);
-      line-height:1.6;
+      line-height:1.8;
       font-size:15.5px;
       max-width:70ch;
     }
 
-    /* ===== Cards ===== */
+    /* cards */
     .grid{ display:grid; gap:14px; }
     .cols2{ grid-template-columns: repeat(2, 1fr); }
     .cols3{ grid-template-columns: repeat(3, 1fr); }
@@ -187,7 +228,7 @@
       padding:16px;
     }
     .card h3{ margin:0 0 6px; font-size:16px; letter-spacing:-.01em; }
-    .card p{ margin:0; color:var(--muted); line-height:1.6; font-size:14px; }
+    .card p{ margin:0; color:var(--muted); line-height:1.8; font-size:14px; }
     .tags{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
     .tag{
       font-size:12px;
@@ -198,8 +239,8 @@
       border-radius:999px;
     }
 
-    /* ===== Buttons ===== */
-    .actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; }
+    /* buttons */
+    .actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; direction:ltr; }
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
       gap:10px;
@@ -211,6 +252,7 @@
       font-weight:800;
       font-size:14px;
       transition:160ms ease;
+      white-space:nowrap;
     }
     .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
     .btn.primary{
@@ -218,79 +260,6 @@
       border-color: rgba(181,155,255,.35);
     }
 
-    /* ===== Live Photo Scenes (sticky + connected) ===== */
-    .scene{ padding: 36px 0; }
-    .scene-sticky{
-      position: relative;
-      height: 90vh;
-      min-height: 560px;
-      border-radius: var(--r2);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.25);
-      box-shadow: var(--shadow);
-    }
-    .scene-sticky .sticky{
-      position: sticky;
-      top: 88px; /* under header */
-      height: calc(90vh - 0px);
-      min-height: 560px;
-      overflow: hidden;
-    }
-
-    /* Video styling: make it background-like (blur + darker) */
-    .scene video{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;   /* handles your video aspect ratio automatically */
-      display:block;
-      transform: scale(1.05);
-      filter: brightness(0.72) contrast(1.06) saturate(1.06) blur(1px);
-    }
-
-    .scene-overlay{
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(900px 380px at 20% 80%, rgba(181,155,255,.16), transparent 65%),
-        radial-gradient(900px 380px at 80% 25%, rgba(124,243,255,.12), transparent 65%),
-        linear-gradient(180deg, rgba(7,5,16,.18), rgba(7,5,16,.78));
-      pointer-events:none;
-    }
-
-    .scene-caption{
-      position:absolute;
-      left:16px; bottom:16px;
-      right:16px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:flex-end;
-      justify-content:space-between;
-      z-index:2;
-    }
-    .bubble{
-      padding:10px 12px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.22);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color:rgba(255,255,255,.78);
-      font-size:12px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-    }
-    .bubble b{
-      display:block;
-      font-size:18px;
-      letter-spacing:-.02em;
-      text-transform:none;
-      color:var(--text);
-      margin-top:6px;
-    }
-
-    /* Footer */
     footer{
       padding: 40px 0 60px;
       border-top: 1px solid rgba(255,255,255,.08);
@@ -300,23 +269,29 @@
 
     @media (max-width: 980px){
       .cols2, .cols3{ grid-template-columns: 1fr; }
-      .scene-sticky{ height: 78vh; min-height: 520px; }
-      .scene-sticky .sticky{ top: 84px; height: 78vh; min-height: 520px; }
     }
+
     @media (prefers-reduced-motion: reduce){
       html{ scroll-behavior:auto; }
       .bg-layer{ will-change:auto; }
+      .bg-video{ transition:none; }
     }
   </style>
 </head>
 
 <body>
-  <!-- Fixed Parallax Background -->
+  <!-- ✅ FULLSCREEN BACKGROUND VIDEOS (two layers for crossfade) -->
+  <div class="bg-video-wrap" aria-hidden="true">
+    <video id="bgA" class="bg-video" autoplay muted loop playsinline preload="auto"></video>
+    <video id="bgB" class="bg-video" autoplay muted loop playsinline preload="auto" style="opacity:0;"></video>
+    <div class="bg-video-overlay"></div>
+    <div class="grain"></div>
+  </div>
+
+  <!-- Optional: subtle parallax shapes above video -->
   <div class="bg-parallax" aria-hidden="true">
     <div class="bg-layer bg-stars" data-depth="0.10"></div>
     <div class="bg-layer bg-glow" data-depth="0.18"></div>
-    <div class="bg-layer bg-mountains" data-depth="0.30"></div>
-    <div class="bg-layer bg-hills" data-depth="0.45"></div>
   </div>
 
   <header>
@@ -335,44 +310,26 @@
   </header>
 
   <main id="top">
-    <!-- HERO -->
-    <section>
+    <!-- ✅ كل Section بتحدد background video بتاعها -->
+    <section data-bg="assets/scene-1.mp4">
       <div class="container">
         <p class="kicker">AI Engineer • NLP • CV • MLOps</p>
         <h1>Malak<br/>Hossam</h1>
         <p class="lead">
-          I build applied AI products — from voice assistants & RAG pipelines to deep learning in NLP and Computer Vision.
-          Based in Cairo, Egypt.
+          I build applied AI products — from voice assistants & RAG pipelines to deep learning
+          in NLP and Computer Vision. Based in Cairo, Egypt.
         </p>
+
         <div class="actions">
           <a class="btn primary" href="#projects">View Projects →</a>
           <a class="btn" href="Malak%20AI%20Engineer.pdf" target="_blank" rel="noopener">Download CV</a>
-          <!-- Update these if needed -->
           <a class="btn" href="https://github.com/malak-hossam" target="_blank" rel="noopener">GitHub</a>
           <a class="btn" href="https://linkedin.com/in/malak-hossam" target="_blank" rel="noopener">LinkedIn</a>
         </div>
       </div>
     </section>
 
-    <!-- SCENE 1 -->
-    <section class="scene" aria-label="Live photo scene 1">
-      <div class="container">
-        <div class="scene-sticky">
-          <div class="sticky">
-            <video class="live" data-mode="loop" autoplay muted loop playsinline preload="metadata"
-              src="assets/scene-1.mp4"></video>
-            <div class="scene-overlay"></div>
-            <div class="scene-caption">
-              <div class="bubble">Connected Live Photos<b>Atmosphere + Motion</b></div>
-              <div class="bubble">Scroll ↓</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ABOUT -->
-    <section id="about">
+    <section id="about" data-bg="assets/scene-1.mp4">
       <div class="container">
         <p class="kicker">About</p>
         <h2>AI Engineer focused on real products</h2>
@@ -400,26 +357,7 @@
       </div>
     </section>
 
-    <!-- SCENE 2 (scroll-scrub = looks interactive) -->
-    <section class="scene" aria-label="Live photo scene 2">
-      <div class="container">
-        <div class="scene-sticky">
-          <div class="sticky">
-            <!-- scrub ties the video to scroll position -->
-            <video class="live" data-mode="scrub" muted playsinline preload="auto"
-              src="assets/scene-2.mp4"></video>
-            <div class="scene-overlay"></div>
-            <div class="scene-caption">
-              <div class="bubble">Scroll-Scrub Scene<b>Cairo Mood</b></div>
-              <div class="bubble">Interactive</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- EXPERIENCE -->
-    <section id="experience">
+    <section id="experience" data-bg="assets/scene-2.mp4">
       <div class="container">
         <p class="kicker">Experience</p>
         <h2>Internships & applied AI work</h2>
@@ -428,7 +366,8 @@
           <div class="card">
             <h3>Prime Softworks — AI Engineer Intern</h3>
             <p>
-              Built an AI voice assistant (voice-to-voice, voice-to-text) with low-latency streaming, plus a full RAG pipeline with long-term memory.
+              Built an AI voice assistant (voice-to-voice, voice-to-text) with low-latency streaming,
+              plus a full RAG pipeline with long-term memory.
             </p>
             <div class="tags">
               <span class="tag">Realtime</span><span class="tag">RAG</span><span class="tag">FastAPI</span><span class="tag">Docker</span>
@@ -438,7 +377,8 @@
           <div class="card">
             <h3>Instant Academy — AI/ML Intern</h3>
             <p>
-              Worked on CV and NLP: CNN/ResNet classification, chat-with-PDF, and sentiment improvements through data cleaning and tuning.
+              Worked on CV and NLP: CNN/ResNet classification, chat-with-PDF,
+              and sentiment improvements through data cleaning and tuning.
             </p>
             <div class="tags">
               <span class="tag">ResNet</span><span class="tag">NLP</span><span class="tag">EDA</span>
@@ -448,25 +388,7 @@
       </div>
     </section>
 
-    <!-- SCENE 3 -->
-    <section class="scene" aria-label="Live photo scene 3">
-      <div class="container">
-        <div class="scene-sticky">
-          <div class="sticky">
-            <video class="live" data-mode="loop" autoplay muted loop playsinline preload="metadata"
-              src="assets/scene-3.mp4"></video>
-            <div class="scene-overlay"></div>
-            <div class="scene-caption">
-              <div class="bubble">Connected Scene<b>Projects & Skills</b></div>
-              <div class="bubble">Loop</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROJECTS -->
-    <section id="projects">
+    <section id="projects" data-bg="assets/scene-2.mp4">
       <div class="container">
         <p class="kicker">Projects</p>
         <h2>Selected work</h2>
@@ -491,8 +413,7 @@
       </div>
     </section>
 
-    <!-- SKILLS -->
-    <section id="skills">
+    <section id="skills" data-bg="assets/scene-3.mp4">
       <div class="container">
         <p class="kicker">Skills</p>
         <h2>Tools I use to ship</h2>
@@ -512,8 +433,7 @@
       </div>
     </section>
 
-    <!-- CONTACT -->
-    <section id="contact">
+    <section id="contact" data-bg="assets/scene-3.mp4">
       <div class="container">
         <p class="kicker">Contact</p>
         <h2>Let’s build something</h2>
@@ -545,7 +465,7 @@
 
     <footer>
       <div class="container">
-        <div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+        <div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;direction:ltr;">
           <div>© <span id="year"></span> Malak Hossam</div>
           <a class="tag" href="#top">Back to top ↑</a>
         </div>
@@ -557,35 +477,142 @@
     document.getElementById("year").textContent = new Date().getFullYear();
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // ===== REAL parallax background
+    /* ===========================
+       1) Parallax layers (خفيف)
+       =========================== */
     const bgLayers = Array.from(document.querySelectorAll(".bg-layer[data-depth]"));
-    let ticking = false;
-
-    function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
-
     function updateParallax(){
       const y = window.scrollY || document.documentElement.scrollTop || 0;
       bgLayers.forEach(layer => {
         const d = parseFloat(layer.dataset.depth || "0.2");
         layer.style.transform = `translate3d(0, ${-y * d}px, 0)`;
       });
-      ticking = false;
     }
 
-    window.addEventListener("scroll", () => {
-      if (reduceMotion) return;
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(updateParallax);
-    }, { passive: true });
-    updateParallax();
+    /* ===========================
+       2) Background video crossfade by section scroll
+       =========================== */
+    const sections = Array.from(document.querySelectorAll("main section[data-bg]"));
 
-    // ===== Active nav highlight
+    const bgA = document.getElementById("bgA");
+    const bgB = document.getElementById("bgB");
+
+    // state
+    let activeIsA = true;
+    let currentSrc = "";
+    let nextSrc = "";
+
+    function setVideoSrc(videoEl, src){
+      if (!src) return;
+      if (videoEl.getAttribute("src") === src) return;
+      videoEl.setAttribute("src", src);
+      // حاول يشغل بسرعة (autoplay muted)
+      videoEl.load();
+      videoEl.play().catch(()=>{});
+    }
+
+    // initialize with first section video
+    function initBackground(){
+      const first = sections[0]?.dataset.bg || "assets/scene-1.mp4";
+      currentSrc = first;
+      setVideoSrc(bgA, currentSrc);
+      bgA.style.opacity = "1";
+      bgB.style.opacity = "0";
+    }
+
+    function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+
+    function getSectionIndexAndProgress(){
+      // نختار أقرب section لمركز الشاشة
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const center = vh * 0.45;
+
+      let bestIdx = 0;
+      let bestDist = Infinity;
+
+      sections.forEach((sec, i) => {
+        const r = sec.getBoundingClientRect();
+        const secMid = r.top + r.height * 0.5;
+        const dist = Math.abs(secMid - center);
+        if (dist < bestDist){
+          bestDist = dist;
+          bestIdx = i;
+        }
+      });
+
+      // progress للانتقال من section الحالية للبعدها:
+      // هنقيس قربنا من نهاية section الحالية (خلال آخر 35% منها)
+      const sec = sections[bestIdx];
+      const r = sec.getBoundingClientRect();
+      const fadeZoneStart = r.height * 0.65; // آخر 35%
+      const scrolledInside = clamp(-r.top, 0, r.height);
+      const p = clamp((scrolledInside - fadeZoneStart) / Math.max(1, (r.height - fadeZoneStart)), 0, 1);
+
+      return { idx: bestIdx, progressToNext: p };
+    }
+
+    function updateBackgroundCrossfade(){
+      if (sections.length === 0) return;
+
+      const { idx, progressToNext } = getSectionIndexAndProgress();
+
+      const cur = sections[idx]?.dataset.bg;
+      const nxt = sections[Math.min(idx+1, sections.length-1)]?.dataset.bg;
+
+      // ensure current is loaded in visible layer
+      if (cur && cur !== currentSrc){
+        currentSrc = cur;
+        // load into the currently visible element
+        if (activeIsA){
+          setVideoSrc(bgA, currentSrc);
+          bgA.style.opacity = "1";
+          bgB.style.opacity = "0";
+        } else {
+          setVideoSrc(bgB, currentSrc);
+          bgB.style.opacity = "1";
+          bgA.style.opacity = "0";
+        }
+      }
+
+      // preload next into hidden layer
+      if (nxt && nxt !== nextSrc){
+        nextSrc = nxt;
+        const hidden = activeIsA ? bgB : bgA;
+        setVideoSrc(hidden, nextSrc);
+      }
+
+      // crossfade when we are in fade zone
+      const visible = activeIsA ? bgA : bgB;
+      const hidden  = activeIsA ? bgB : bgA;
+
+      visible.style.opacity = String(1 - progressToNext);
+      hidden.style.opacity  = String(progressToNext);
+
+      // when transition completes, swap active layer
+      if (progressToNext > 0.98 && nxt && nxt !== currentSrc){
+        // finalize swap
+        activeIsA = !activeIsA;
+        currentSrc = nxt;
+
+        const nowVisible = activeIsA ? bgA : bgB;
+        const nowHidden  = activeIsA ? bgB : bgA;
+
+        nowVisible.style.opacity = "1";
+        nowHidden.style.opacity  = "0";
+      }
+    }
+
+    /* ===========================
+       3) Nav active highlight
+       =========================== */
     const navLinks = Array.from(document.querySelectorAll(".links a"));
-    const sectionIds = navLinks.map(a => a.getAttribute("href")).filter(h => h && h.startsWith("#"));
-    const sections = sectionIds.map(id => document.querySelector(id)).filter(Boolean);
+    const idSections = navLinks
+      .map(a => a.getAttribute("href"))
+      .filter(h => h && h.startsWith("#"))
+      .map(id => document.querySelector(id))
+      .filter(Boolean);
 
-    const obs = new IntersectionObserver((entries) => {
+    const navObs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (!e.isIntersecting) return;
         const id = "#" + e.target.id;
@@ -593,52 +620,38 @@
       });
     }, { rootMargin: "-45% 0px -50% 0px", threshold: 0.01 });
 
-    sections.forEach(s => obs.observe(s));
+    idSections.forEach(s => navObs.observe(s));
 
-    // ===== Live photo: loop + scrub
-    const videos = Array.from(document.querySelectorAll("video.live"));
-
-    // Pause loop videos off-screen (performance)
-    const vObs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        const v = e.target;
-        const mode = v.dataset.mode || "loop";
-        if (mode !== "loop") return;
-        if (e.isIntersecting) v.play().catch(()=>{});
-        else v.pause();
-      });
-    }, { threshold: 0.12 });
-
-    videos.forEach(v => vObs.observe(v));
-
-    // Scroll-scrub scene
-    function scrubVideo(v){
-      const rect = v.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      const total = rect.height + vh;
-      const progress = clamp((vh - rect.top) / total, 0, 1);
-      if (!isFinite(v.duration) || v.duration === 0) return;
-      v.currentTime = progress * v.duration;
-    }
-
-    function onScrollScrub(){
+    /* ===========================
+       Scroll handler (single RAF)
+       =========================== */
+    let ticking = false;
+    function onScroll(){
       if (reduceMotion) return;
-      videos.forEach(v => {
-        if ((v.dataset.mode || "") !== "scrub") return;
-        scrubVideo(v);
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        updateParallax();
+        updateBackgroundCrossfade();
+        ticking = false;
       });
     }
 
-    window.addEventListener("scroll", () => requestAnimationFrame(onScrollScrub), { passive: true });
+    window.addEventListener("scroll", onScroll, { passive:true });
 
-    videos.forEach(v => {
-      if ((v.dataset.mode || "") === "scrub") {
-        v.addEventListener("loadedmetadata", () => {
-          v.currentTime = 0.001; // show first frame
-          onScrollScrub();
-        });
-      }
-    });
+    // init
+    initBackground();
+    updateParallax();
+    updateBackgroundCrossfade();
+
+    // If user has reduced motion, still set first background
+    if (reduceMotion){
+      // Keep static, no crossfades
+      const first = sections[0]?.dataset.bg || "assets/scene-1.mp4";
+      setVideoSrc(bgA, first);
+      bgA.style.opacity = "1";
+      bgB.style.opacity = "0";
+    }
   </script>
 </body>
 </html>
