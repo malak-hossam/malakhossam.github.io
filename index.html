@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#070510" />
   <title>Malak Hossam — AI Engineer</title>
+  <meta name="description" content="Malak Hossam — AI Engineer portfolio (NLP • CV • MLOps)" />
+
   <style>
     :root{
       --bg0:#070510;
@@ -12,6 +14,7 @@
       --bg2:#120a25;
       --text:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.58);
       --stroke:rgba(255,255,255,.14);
       --glass:rgba(255,255,255,.07);
       --glass2:rgba(255,255,255,.05);
@@ -23,8 +26,10 @@
       --r:18px;
       --r2:26px;
     }
+
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
+    html{ scroll-behavior:smooth; }
     body{
       margin:0;
       color:var(--text);
@@ -35,7 +40,7 @@
     a{ color:inherit; text-decoration:none; }
     .container{ width:min(var(--max), calc(100% - 40px)); margin:0 auto; }
 
-    /* ======= Fixed Parallax Background (REAL depth) ======= */
+    /* ===== Fixed Parallax Background (REAL parallax while scrolling) ===== */
     .bg-parallax{
       position:fixed;
       inset:-20vh -10vw -20vh -10vw;
@@ -52,10 +57,10 @@
     }
     .bg-stars{
       background:
-        radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,.8), transparent 55%),
-        radial-gradient(1.5px 1.5px at 24% 70%, rgba(255,255,255,.7), transparent 55%),
+        radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,.85), transparent 55%),
+        radial-gradient(1.5px 1.5px at 24% 70%, rgba(255,255,255,.70), transparent 55%),
         radial-gradient(1px 1px at 65% 30%, rgba(255,255,255,.65), transparent 55%),
-        radial-gradient(2px 2px at 80% 60%, rgba(255,255,255,.8), transparent 55%),
+        radial-gradient(2px 2px at 80% 60%, rgba(255,255,255,.80), transparent 55%),
         radial-gradient(1px 1px at 52% 48%, rgba(255,255,255,.55), transparent 55%);
       opacity:.40;
       filter:none;
@@ -84,7 +89,7 @@
       opacity:.98;
     }
 
-    /* ======= Header / Nav ======= */
+    /* ===== Header / Nav ===== */
     header{
       position:fixed;
       left:0; right:0; top:0;
@@ -138,14 +143,14 @@
 
     main{ padding-top:72px; }
 
-    /* ======= Sections ======= */
+    /* ===== Sections ===== */
     section{ padding: 84px 0; position:relative; }
     .kicker{
       margin:0 0 10px;
       font-size:12px;
       letter-spacing:.18em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.58);
+      color:var(--muted2);
     }
     h1{
       margin:0;
@@ -167,7 +172,7 @@
       max-width:70ch;
     }
 
-    /* ======= Glass cards ======= */
+    /* ===== Cards ===== */
     .grid{ display:grid; gap:14px; }
     .cols2{ grid-template-columns: repeat(2, 1fr); }
     .cols3{ grid-template-columns: repeat(3, 1fr); }
@@ -180,7 +185,6 @@
       -webkit-backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
       padding:16px;
-      transform: translateZ(0);
     }
     .card h3{ margin:0 0 6px; font-size:16px; letter-spacing:-.01em; }
     .card p{ margin:0; color:var(--muted); line-height:1.6; font-size:14px; }
@@ -194,7 +198,7 @@
       border-radius:999px;
     }
 
-    /* ======= Buttons ======= */
+    /* ===== Buttons ===== */
     .actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; }
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
@@ -204,7 +208,7 @@
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
       box-shadow: 0 16px 38px rgba(0,0,0,.45);
-      font-weight:700;
+      font-weight:800;
       font-size:14px;
       transition:160ms ease;
     }
@@ -214,13 +218,11 @@
       border-color: rgba(181,155,255,.35);
     }
 
-    /* ======= LIVE PHOTO SCENES (connected) ======= */
-    .scene{
-      padding: 36px 0;
-    }
+    /* ===== Live Photo Scenes (sticky + connected) ===== */
+    .scene{ padding: 36px 0; }
     .scene-sticky{
       position: relative;
-      height: 90vh;            /* sticky viewport */
+      height: 90vh;
       min-height: 560px;
       border-radius: var(--r2);
       overflow: hidden;
@@ -230,30 +232,32 @@
     }
     .scene-sticky .sticky{
       position: sticky;
-      top: 88px;              /* under header */
+      top: 88px; /* under header */
       height: calc(90vh - 0px);
       min-height: 560px;
       overflow: hidden;
     }
+
+    /* Video styling: make it background-like (blur + darker) */
     .scene video{
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover;   /* handles your video aspect ratio automatically */
       display:block;
-      transform: scale(1.02);
-      filter: contrast(1.05) saturate(1.05);
+      transform: scale(1.05);
+      filter: brightness(0.72) contrast(1.06) saturate(1.06) blur(1px);
     }
 
-    /* Soft overlays to blend scenes into the page (connected feel) */
     .scene-overlay{
       position:absolute;
       inset:0;
       background:
         radial-gradient(900px 380px at 20% 80%, rgba(181,155,255,.16), transparent 65%),
         radial-gradient(900px 380px at 80% 25%, rgba(124,243,255,.12), transparent 65%),
-        linear-gradient(180deg, rgba(7,5,16,.22), rgba(7,5,16,.55));
+        linear-gradient(180deg, rgba(7,5,16,.18), rgba(7,5,16,.78));
       pointer-events:none;
     }
+
     .scene-caption{
       position:absolute;
       left:16px; bottom:16px;
@@ -265,11 +269,11 @@
       justify-content:space-between;
       z-index:2;
     }
-    .scene-caption .bubble{
+    .bubble{
       padding:10px 12px;
       border-radius: 999px;
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.20);
+      background: rgba(0,0,0,.22);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       color:rgba(255,255,255,.78);
@@ -277,7 +281,7 @@
       letter-spacing:.12em;
       text-transform:uppercase;
     }
-    .scene-caption b{
+    .bubble b{
       display:block;
       font-size:18px;
       letter-spacing:-.02em;
@@ -286,12 +290,7 @@
       margin-top:6px;
     }
 
-    /* ======= Simple hover tilt (interactive) ======= */
-    .tilt{
-      transform-style: preserve-3d;
-      will-change: transform;
-    }
-
+    /* Footer */
     footer{
       padding: 40px 0 60px;
       border-top: 1px solid rgba(255,255,255,.08);
@@ -306,8 +305,8 @@
     }
     @media (prefers-reduced-motion: reduce){
       html{ scroll-behavior:auto; }
+      .bg-layer{ will-change:auto; }
     }
-    html{ scroll-behavior:smooth; }
   </style>
 </head>
 
@@ -348,27 +347,24 @@
         <div class="actions">
           <a class="btn primary" href="#projects">View Projects →</a>
           <a class="btn" href="Malak%20AI%20Engineer.pdf" target="_blank" rel="noopener">Download CV</a>
+          <!-- Update these if needed -->
           <a class="btn" href="https://github.com/malak-hossam" target="_blank" rel="noopener">GitHub</a>
           <a class="btn" href="https://linkedin.com/in/malak-hossam" target="_blank" rel="noopener">LinkedIn</a>
         </div>
       </div>
     </section>
 
-    <!-- SCENE 1 (connected live photo) -->
+    <!-- SCENE 1 -->
     <section class="scene" aria-label="Live photo scene 1">
       <div class="container">
-        <div class="scene-sticky tilt" data-tilt>
+        <div class="scene-sticky">
           <div class="sticky">
-            <!-- Put your looping clip here -->
             <video class="live" data-mode="loop" autoplay muted loop playsinline preload="metadata"
               src="assets/scene-1.mp4"></video>
             <div class="scene-overlay"></div>
             <div class="scene-caption">
-              <div class="bubble">
-                Connected Live Photos
-                <b>Voice + Realtime AI</b>
-              </div>
-              <div class="bubble">Scroll →</div>
+              <div class="bubble">Connected Live Photos<b>Atmosphere + Motion</b></div>
+              <div class="bubble">Scroll ↓</div>
             </div>
           </div>
         </div>
@@ -381,13 +377,16 @@
         <p class="kicker">About</p>
         <h2>AI Engineer focused on real products</h2>
         <p class="lead">
-          BSc Computer Science (HTI, Cairo) — GPA 3.87 (Excellent with Honor). I like turning research ideas into systems that ship.
+          BSc Computer Science (HTI, Cairo) — GPA 3.87 (Excellent with Honor).
+          I like turning research ideas into systems that ship.
         </p>
 
         <div class="grid cols2" style="margin-top:16px;">
           <div class="card">
             <h3>Education</h3>
-            <p>Higher Technological Institute (HTI), Cairo — BSc Computer Science<br><span style="opacity:.8">Sept 2021 – Aug 2025</span></p>
+            <p>Higher Technological Institute (HTI), Cairo — BSc Computer Science<br>
+              <span style="opacity:.8">Sept 2021 – Aug 2025</span>
+            </p>
           </div>
           <div class="card">
             <h3>Contact</h3>
@@ -401,21 +400,18 @@
       </div>
     </section>
 
-    <!-- SCENE 2 (scroll-scrub option) -->
+    <!-- SCENE 2 (scroll-scrub = looks interactive) -->
     <section class="scene" aria-label="Live photo scene 2">
       <div class="container">
-        <div class="scene-sticky tilt" data-tilt>
+        <div class="scene-sticky">
           <div class="sticky">
-            <!-- data-mode="scrub" ties video time to scroll (more “Live Photo” feeling) -->
+            <!-- scrub ties the video to scroll position -->
             <video class="live" data-mode="scrub" muted playsinline preload="auto"
               src="assets/scene-2.mp4"></video>
             <div class="scene-overlay"></div>
             <div class="scene-caption">
-              <div class="bubble">
-                Scroll-Scrub Scene
-                <b>RAG + Memory</b>
-              </div>
-              <div class="bubble">Parallax Depth</div>
+              <div class="bubble">Scroll-Scrub Scene<b>Cairo Mood</b></div>
+              <div class="bubble">Interactive</div>
             </div>
           </div>
         </div>
@@ -427,17 +423,23 @@
       <div class="container">
         <p class="kicker">Experience</p>
         <h2>Internships & applied AI work</h2>
+
         <div class="grid cols2" style="margin-top:16px;">
           <div class="card">
             <h3>Prime Softworks — AI Engineer Intern</h3>
-            <p>Voice-to-voice / voice-to-text assistant using GPT Realtime, full RAG with Supabase, microservices with FastAPI + Docker + LangChain.</p>
+            <p>
+              Built an AI voice assistant (voice-to-voice, voice-to-text) with low-latency streaming, plus a full RAG pipeline with long-term memory.
+            </p>
             <div class="tags">
               <span class="tag">Realtime</span><span class="tag">RAG</span><span class="tag">FastAPI</span><span class="tag">Docker</span>
             </div>
           </div>
+
           <div class="card">
             <h3>Instant Academy — AI/ML Intern</h3>
-            <p>CV + NLP projects including CNN/ResNet classification and sentiment tuning; improved accuracy with data cleaning + targeted tuning.</p>
+            <p>
+              Worked on CV and NLP: CNN/ResNet classification, chat-with-PDF, and sentiment improvements through data cleaning and tuning.
+            </p>
             <div class="tags">
               <span class="tag">ResNet</span><span class="tag">NLP</span><span class="tag">EDA</span>
             </div>
@@ -446,20 +448,17 @@
       </div>
     </section>
 
-    <!-- SCENE 3 (loop) -->
+    <!-- SCENE 3 -->
     <section class="scene" aria-label="Live photo scene 3">
       <div class="container">
-        <div class="scene-sticky tilt" data-tilt>
+        <div class="scene-sticky">
           <div class="sticky">
             <video class="live" data-mode="loop" autoplay muted loop playsinline preload="metadata"
               src="assets/scene-3.mp4"></video>
             <div class="scene-overlay"></div>
             <div class="scene-caption">
-              <div class="bubble">
-                Connected Feel
-                <b>Computer Vision + Deployment</b>
-              </div>
-              <div class="bubble">Sticky Scene</div>
+              <div class="bubble">Connected Scene<b>Projects & Skills</b></div>
+              <div class="bubble">Loop</div>
             </div>
           </div>
         </div>
@@ -471,10 +470,11 @@
       <div class="container">
         <p class="kicker">Projects</p>
         <h2>Selected work</h2>
+
         <div class="grid cols3" style="margin-top:16px;">
           <div class="card">
             <h3>Arabic Morphology (AraBART)</h3>
-            <p>Fine-tuned on MASAQ with CAMeL Tools; extracted root/POS/case; ~82% accuracy.</p>
+            <p>Fine-tuned on MASAQ with CAMeL Tools; extracted root/POS/case features; ~82% accuracy.</p>
             <div class="tags"><span class="tag">AraBART</span><span class="tag">NLP</span></div>
           </div>
           <div class="card">
@@ -484,7 +484,7 @@
           </div>
           <div class="card">
             <h3>Butterfly Classification</h3>
-            <p>ResNet fine-tuned to ~94% with PyTorch + OpenCV.</p>
+            <p>ResNet fine-tuned to ~94% using PyTorch + OpenCV.</p>
             <div class="tags"><span class="tag">ResNet</span><span class="tag">PyTorch</span></div>
           </div>
         </div>
@@ -496,14 +496,17 @@
       <div class="container">
         <p class="kicker">Skills</p>
         <h2>Tools I use to ship</h2>
+
         <div class="grid cols2" style="margin-top:16px;">
           <div class="card">
             <h3>Programming</h3>
             <p>Python • C++ • Java</p>
+            <div class="tags"><span class="tag">Clean APIs</span><span class="tag">Production mindset</span></div>
           </div>
           <div class="card">
-            <h3>Libraries</h3>
-            <p>PyTorch • TensorFlow • Keras • FastAPI • Docker • Git • LangChain • Plotly</p>
+            <h3>Libraries & Tools</h3>
+            <p>PyTorch • TensorFlow • Keras • FastAPI • Docker • Git • LangChain</p>
+            <div class="tags"><span class="tag">NLP</span><span class="tag">Computer Vision</span><span class="tag">MLOps</span></div>
           </div>
         </div>
       </div>
@@ -514,10 +517,14 @@
       <div class="container">
         <p class="kicker">Contact</p>
         <h2>Let’s build something</h2>
+
         <div class="grid cols2" style="margin-top:16px;">
           <div class="card">
             <h3>Email</h3>
-            <p><a href="mailto:malak.hossam.work@gmail.com">malak.hossam.work@gmail.com</a><br>01204073624</p>
+            <p>
+              <a href="mailto:malak.hossam.work@gmail.com">malak.hossam.work@gmail.com</a><br>
+              01204073624
+            </p>
             <div class="actions">
               <a class="btn primary" href="mailto:malak.hossam.work@gmail.com">Email me →</a>
               <a class="btn" href="Malak%20AI%20Engineer.pdf" target="_blank" rel="noopener">Open CV</a>
@@ -530,6 +537,7 @@
               <a href="https://linkedin.com/in/malak-hossam" target="_blank" rel="noopener">LinkedIn</a><br>
               <a href="https://kaggle.com/malakhossam1" target="_blank" rel="noopener">Kaggle</a>
             </p>
+            <div class="tags"><span class="tag">Open to roles</span><span class="tag">Cairo</span></div>
           </div>
         </div>
       </div>
@@ -546,16 +554,14 @@
   </main>
 
   <script>
-    // ===== Year
     document.getElementById("year").textContent = new Date().getFullYear();
-
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // ===== REAL Parallax: move fixed background layers on scroll
+    // ===== REAL parallax background
     const bgLayers = Array.from(document.querySelectorAll(".bg-layer[data-depth]"));
     let ticking = false;
 
-    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+    function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
 
     function updateParallax(){
       const y = window.scrollY || document.documentElement.scrollTop || 0;
@@ -572,10 +578,9 @@
       ticking = true;
       requestAnimationFrame(updateParallax);
     }, { passive: true });
-
     updateParallax();
 
-    // ===== Nav active section highlight (interactive)
+    // ===== Active nav highlight
     const navLinks = Array.from(document.querySelectorAll(".links a"));
     const sectionIds = navLinks.map(a => a.getAttribute("href")).filter(h => h && h.startsWith("#"));
     const sections = sectionIds.map(id => document.querySelector(id)).filter(Boolean);
@@ -590,43 +595,27 @@
 
     sections.forEach(s => obs.observe(s));
 
-    // ===== Tilt cards (interactive)
-    const tilts = document.querySelectorAll("[data-tilt]");
-    tilts.forEach(el => {
-      el.addEventListener("mousemove", (ev) => {
-        if (reduceMotion) return;
-        const r = el.getBoundingClientRect();
-        const x = (ev.clientX - r.left) / r.width - 0.5;
-        const y = (ev.clientY - r.top) / r.height - 0.5;
-        el.style.transform = `perspective(900px) rotateX(${(-y*5).toFixed(2)}deg) rotateY(${(x*6).toFixed(2)}deg)`;
-      });
-      el.addEventListener("mouseleave", () => { el.style.transform = "none"; });
-    });
-
-    // ===== Live Photos / Scenes
-    // 1) loop videos: autoplay loop
-    // 2) scrub videos: scroll controls currentTime (more like “live photo while scrolling”)
+    // ===== Live photo: loop + scrub
     const videos = Array.from(document.querySelectorAll("video.live"));
 
-    // Pause videos when far off-screen (saves CPU)
+    // Pause loop videos off-screen (performance)
     const vObs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         const v = e.target;
         const mode = v.dataset.mode || "loop";
-        if (mode === "loop") {
-          if (e.isIntersecting) { v.play().catch(()=>{}); }
-          else { v.pause(); }
-        }
+        if (mode !== "loop") return;
+        if (e.isIntersecting) v.play().catch(()=>{});
+        else v.pause();
       });
     }, { threshold: 0.12 });
 
     videos.forEach(v => vObs.observe(v));
 
-    // Scroll-scrub implementation
+    // Scroll-scrub scene
     function scrubVideo(v){
       const rect = v.getBoundingClientRect();
       const vh = window.innerHeight || document.documentElement.clientHeight;
-      const total = rect.height + vh;              // how long it stays in view
+      const total = rect.height + vh;
       const progress = clamp((vh - rect.top) / total, 0, 1);
       if (!isFinite(v.duration) || v.duration === 0) return;
       v.currentTime = progress * v.duration;
@@ -640,17 +629,12 @@
       });
     }
 
-    window.addEventListener("scroll", () => {
-      if (reduceMotion) return;
-      requestAnimationFrame(onScrollScrub);
-    }, { passive: true });
+    window.addEventListener("scroll", () => requestAnimationFrame(onScrollScrub), { passive: true });
 
-    // Ensure scrub videos have duration loaded
     videos.forEach(v => {
-      if ((v.dataset.mode||"") === "scrub") {
+      if ((v.dataset.mode || "") === "scrub") {
         v.addEventListener("loadedmetadata", () => {
-          // start at first frame
-          v.currentTime = 0.001;
+          v.currentTime = 0.001; // show first frame
           onScrollScrub();
         });
       }
