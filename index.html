@@ -1,403 +1,908 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malak Hossam | Applied AI Systems Engineer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-base: #050507;
-            --metallic-light: #e0e5ec;
-            --metallic-dark: #8b92a5;
-            --accent-cyan: #22d3ee;
-            --accent-violet: #818cf8;
-            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-            
-            /* Engine Variables */
-            --sy: 0px;     /* Scroll Y */
-            --vy: 0px;     /* Scroll Velocity */
-            --mx: 0px;     /* Mouse X */
-            --my: 0px;     /* Mouse Y */
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0814" />
+  <title>Malak Hossam — AI Engineer</title>
+  <meta name="description" content="Malak Hossam — AI Engineer portfolio (NLP • CV • MLOps). Experience, projects, skills, contact." />
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-base); 
-            color: var(--metallic-light); 
-            overflow-x: hidden;
-            margin: 0;
-            cursor: auto; /* L4 Readability Priority: Keep cursor visible */
-        }
+  <style>
+    /* ====== Base / Theme ====== */
+    :root{
+      --bg0:#070510;
+      --bg1:#0b0814;
+      --bg2:#120a25;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.16);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --muted2: rgba(255,255,255,.58);
+      --accent:#b59bff;
+      --accent2:#ffb3d6;
+      --accent3:#7cf3ff;
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 26px;
+      --max: 1120px;
+    }
 
-        /* --- THE 6-LAYER SYSTEM --- */
-        
-        /* L0: Deep Gradient (0.10x) */
-        #L0-gradient {
-            position: fixed; top: -20%; left: -20%; width: 140vw; height: 140vh; z-index: -5;
-            background: radial-gradient(circle at 50% 30%, rgba(10, 10, 15, 1) 0%, var(--bg-base) 100%);
-            transform: translateY(calc(var(--sy) * -0.10));
-            pointer-events: none;
-            will-change: transform;
-        }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin: 0;
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 600px at 70% -10%, rgba(181,155,255,.25), transparent 60%),
+        radial-gradient(900px 700px at 15% 10%, rgba(124,243,255,.16), transparent 55%),
+        radial-gradient(900px 600px at 85% 40%, rgba(255,179,214,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 40%, var(--bg2) 100%);
+      overflow-x: hidden;
+    }
 
-        /* L1: Dotted Grid (0.18x + 20% pointer) */
-        #L1-grid {
-            position: fixed; top: -10%; left: -10%; width: 120vw; height: 120vh; z-index: -4;
-            transform: translate3d(calc(var(--mx) * -20px), calc(var(--sy) * -0.18 + var(--my) * -20px), 0);
-            pointer-events: none;
-            will-change: transform;
-        }
+    a{ color: inherit; text-decoration: none; }
+    a:hover{ opacity: .92; }
+    .container{ width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
 
-        /* L2: Accent Particles/Orbs (0.28x + 45% pointer) */
-        #L2-particles {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3;
-            transform: translate3d(calc(var(--mx) * -45px), calc(var(--sy) * -0.28 + var(--my) * -45px), 0);
-            pointer-events: none;
-            will-change: transform;
-        }
+    /* ====== Top Nav (VISITE-ish minimal) ====== */
+    header{
+      position: fixed;
+      left: 0; right: 0; top: 0;
+      z-index: 50;
+      padding: 14px 0;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, rgba(7,5,16,.72), rgba(7,5,16,.25));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
 
-        /* L3: Ghost Aura (0.35x + 80-150ms delay managed in JS) */
-        #L3-ghost {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
-            transform: translateY(calc(var(--sy) * -0.35));
-            pointer-events: none;
-            will-change: transform;
-        }
+    .nav{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
 
-        /* L4: Content (1.00x Native Scroll - Readability Priority) */
-        #L4-content {
-            position: relative; z-index: 10;
-        }
+    .brand{
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 14px;
+    }
 
-        /* L5: Foreground Highlights (1.12x Subtle) */
-        #L5-highlights {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 50;
-            transform: translateY(calc(var(--sy) * -1.12));
-            pointer-events: none;
-            will-change: transform;
-        }
+    .brand .dot{
+      width: 10px; height: 10px; border-radius: 99px;
+      background: radial-gradient(circle at 30% 30%, var(--accent3), var(--accent));
+      box-shadow: 0 0 22px rgba(181,155,255,.65);
+    }
 
-        /* --- VISUAL ASSETS --- */
-        .ambient-orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.12; }
-        .orb-1 { top: 10%; left: 20%; width: 400px; height: 400px; background: var(--accent-cyan); }
-        .orb-2 { top: 60%; right: 10%; width: 500px; height: 500px; background: var(--accent-violet); }
+    .navlinks{
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
 
-        #ghost-cursor {
-            position: absolute; width: 500px; height: 500px; border-radius: 50%;
-            background: radial-gradient(circle, rgba(129, 140, 248, 0.05) 0%, rgba(255,255,255,0) 60%);
-            transform: translate(-50%, -50%);
-            filter: blur(25px);
-            will-change: left, top;
-        }
+    .navlinks a{
+      font-size: 13px;
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: 180ms ease;
+    }
+    .navlinks a:hover{
+      color: var(--text);
+      border-color: rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
 
-        .fg-dust {
-            position: absolute; border-radius: 50%; background: rgba(255,255,255,0.8);
-            box-shadow: 0 0 20px 2px rgba(255,255,255,0.4); filter: blur(2px);
-        }
+    .cta{
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 10px 24px rgba(0,0,0,.35);
+    }
+    .cta span{
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
 
-        /* --- TYPOGRAPHY & CARDS --- */
-        .cinematic-title { font-size: clamp(3.5rem, 8vw, 8rem); line-height: 1.05; letter-spacing: -0.04em; font-weight: 800; }
-        .section-title { font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; }
-        
-        .text-metallic {
-            background: linear-gradient(135deg, #ffffff 0%, #6b7280 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+    /* ====== Sections ====== */
+    main{ padding-top: 72px; }
+    section{
+      position: relative;
+      padding: 86px 0;
+    }
+    .section-title{
+      font-size: 13px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin: 0 0 12px;
+    }
+    .section-head{
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+    h2{
+      margin: 0;
+      font-size: clamp(24px, 3.2vw, 36px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .lead{
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 68ch;
+      font-size: 15.5px;
+      line-height: 1.6;
+    }
 
-        .ticket-module {
-            background: linear-gradient(180deg, rgba(20, 20, 25, 0.7) 0%, rgba(10, 10, 12, 0.5) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 12px; backdrop-filter: blur(16px);
-            transition: transform 0.5s var(--ease-out-expo), border-color 0.4s ease, box-shadow 0.4s ease;
-        }
-        .ticket-module:hover {
-            border-color: rgba(129, 140, 248, 0.3);
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-        }
+    /* ====== Hero / Parallax ====== */
+    .hero{
+      min-height: calc(100svh - 72px);
+      display: grid;
+      place-items: center;
+      padding: 92px 0 40px;
+      overflow: hidden;
+    }
 
-        .scene-element {
-            opacity: 0; transform: translateY(30px);
-            transition: opacity 1s var(--ease-out-expo), transform 1s var(--ease-out-expo);
-        }
-        .scene-element.active { opacity: 1; transform: translateY(0); }
-    </style>
+    .hero-grid{
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 22px;
+      align-items: center;
+    }
+
+    .badge{
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      width: fit-content;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    .badge .pill{
+      width: 10px; height: 10px; border-radius: 99px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      box-shadow: 0 0 18px rgba(255,179,214,.45);
+    }
+    .badge b{
+      font-size: 12px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    .badge span{ color: var(--muted); font-size: 12px; letter-spacing: .06em; }
+
+    h1{
+      margin: 0;
+      font-size: clamp(40px, 6vw, 74px);
+      line-height: .96;
+      letter-spacing: -0.04em;
+    }
+    .subtitle{
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 62ch;
+    }
+
+    .hero-actions{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      box-shadow: 0 16px 38px rgba(0,0,0,.45);
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(181,155,255,.28), rgba(124,243,255,.14));
+      border-color: rgba(181,155,255,.35);
+    }
+
+    .hero-card{
+      border-radius: var(--radius2);
+      border: 1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      min-height: 320px;
+    }
+
+    .hero-card .inner{
+      padding: 18px 18px 16px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .mini{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mini .chip{
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .mini .chip b{ color: var(--text); display: block; margin-bottom: 2px; }
+
+    /* Parallax layers (SVG-ish shapes + gradients) */
+    .parallax{
+      position: absolute;
+      inset: -20% -20% -20% -20%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .layer{
+      position: absolute;
+      inset: 0;
+      transform: translate3d(0,0,0);
+      will-change: transform;
+      opacity: .95;
+      filter: drop-shadow(0 35px 65px rgba(0,0,0,.45));
+    }
+
+    .stars{
+      background:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.9), transparent 55%),
+        radial-gradient(1.5px 1.5px at 35% 55%, rgba(255,255,255,.75), transparent 55%),
+        radial-gradient(1.5px 1.5px at 70% 25%, rgba(255,255,255,.6), transparent 55%),
+        radial-gradient(2px 2px at 80% 60%, rgba(255,255,255,.8), transparent 55%),
+        radial-gradient(1px 1px at 55% 40%, rgba(255,255,255,.55), transparent 55%),
+        radial-gradient(1.5px 1.5px at 15% 70%, rgba(255,255,255,.55), transparent 55%);
+      opacity: .35;
+      filter: none;
+    }
+
+    .glow{
+      background:
+        radial-gradient(500px 240px at 55% 30%, rgba(181,155,255,.35), transparent 60%),
+        radial-gradient(420px 260px at 75% 60%, rgba(255,179,214,.22), transparent 62%),
+        radial-gradient(380px 240px at 25% 65%, rgba(124,243,255,.18), transparent 60%);
+      opacity: .9;
+      filter: blur(0px);
+    }
+
+    .mountains{
+      background:
+        radial-gradient(800px 380px at 30% 80%, rgba(181,155,255,.25), transparent 62%),
+        radial-gradient(800px 380px at 70% 85%, rgba(124,243,255,.18), transparent 60%),
+        linear-gradient(180deg, transparent 35%, rgba(0,0,0,.35));
+      clip-path: polygon(0 70%, 12% 62%, 25% 72%, 36% 58%, 50% 74%, 62% 60%, 78% 73%, 90% 63%, 100% 70%, 100% 100%, 0 100%);
+      opacity: .9;
+    }
+
+    .hills{
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+        radial-gradient(600px 260px at 30% 85%, rgba(255,179,214,.18), transparent 65%),
+        radial-gradient(600px 260px at 70% 85%, rgba(181,155,255,.16), transparent 62%);
+      clip-path: polygon(0 78%, 15% 70%, 30% 82%, 45% 68%, 60% 82%, 75% 72%, 100% 80%, 100% 100%, 0 100%);
+      opacity: .95;
+    }
+
+    .mist{
+      background:
+        radial-gradient(600px 220px at 50% 80%, rgba(255,255,255,.10), transparent 65%),
+        radial-gradient(600px 220px at 40% 88%, rgba(255,255,255,.08), transparent 60%),
+        radial-gradient(600px 220px at 60% 88%, rgba(255,255,255,.06), transparent 60%);
+      filter: blur(2px);
+      opacity: .8;
+    }
+
+    /* Floating “glass” labels like the video sections */
+    .float-tag{
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      z-index: 4;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .float-tag i{
+      width: 8px; height: 8px; border-radius: 99px;
+      background: radial-gradient(circle at 30% 30%, var(--accent3), var(--accent));
+      box-shadow: 0 0 12px rgba(124,243,255,.4);
+      display: inline-block;
+    }
+
+    /* ====== Cards / Grids ====== */
+    .grid{
+      display: grid;
+      gap: 14px;
+    }
+    .grid.cols-3{ grid-template-columns: repeat(3, 1fr); }
+    .grid.cols-2{ grid-template-columns: repeat(2, 1fr); }
+
+    .card{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      padding: 16px 16px 14px;
+    }
+    .card h3{
+      margin: 0 0 6px;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+    .card p{
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .meta{
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag{
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .02em;
+    }
+
+    /* ====== Timeline ====== */
+    .timeline{
+      position: relative;
+      margin-top: 8px;
+    }
+    .timeline::before{
+      content:"";
+      position:absolute;
+      left: 10px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(181,155,255,.6), rgba(255,179,214,.25));
+      opacity: .8;
+    }
+    .titem{
+      position: relative;
+      padding-left: 34px;
+      margin: 14px 0;
+    }
+    .titem::before{
+      content:"";
+      position:absolute;
+      left: 4px;
+      top: 6px;
+      width: 14px; height: 14px;
+      border-radius: 99px;
+      background: radial-gradient(circle at 30% 30%, var(--accent2), var(--accent));
+      box-shadow: 0 0 18px rgba(181,155,255,.35);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .titem .when{
+      color: var(--muted2);
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .titem .role{
+      margin: 0;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .titem .place{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .titem ul{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ====== Footer ====== */
+    footer{
+      padding: 40px 0 60px;
+      color: var(--muted2);
+      border-top: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,.22));
+    }
+    .foot{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* ====== Scroll behavior / tiny “VISITE” vibe ====== */
+    html{
+      scroll-behavior: smooth;
+    }
+
+    /* ====== Responsive ====== */
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .grid.cols-3{ grid-template-columns: 1fr; }
+      .grid.cols-2{ grid-template-columns: 1fr; }
+      .hero{ padding-top: 86px; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      html{ scroll-behavior: auto; }
+      .layer{ will-change: auto; }
+      .btn{ transition: none; }
+    }
+  </style>
 </head>
+
 <body>
+  <header>
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="#top" aria-label="Home">
+          <span class="dot"></span>
+          <span>MALAK</span>
+        </a>
 
-    <div id="L0-gradient"></div>
-
-    <div id="L1-grid">
-        <canvas id="grid-canvas"></canvas>
-    </div>
-
-    <div id="L2-particles">
-        <div class="ambient-orb orb-1"></div>
-        <div class="ambient-orb orb-2"></div>
-    </div>
-
-    <div id="L3-ghost">
-        <div id="ghost-cursor"></div>
-    </div>
-
-    <div id="L5-highlights">
-        <div class="fg-dust" style="top: 150vh; left: 15%; width: 6px; height: 6px;"></div>
-        <div class="fg-dust" style="top: 250vh; right: 20%; width: 4px; height: 4px;"></div>
-        <div class="fg-dust" style="top: 380vh; left: 40%; width: 8px; height: 8px;"></div>
-    </div>
-
-    <main id="L4-content">
-        
-        <nav class="fixed top-0 w-full z-50 px-8 py-6 mix-blend-difference scene-element active">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <span class="font-bold tracking-tighter text-white text-xl">MALAK.H</span>
-                <div class="hidden md:flex gap-8 text-xs uppercase tracking-widest text-gray-400 font-medium">
-                    <a href="#home" class="hover:text-white transition-colors">Home</a>
-                    <a href="#tickets" class="hover:text-white transition-colors">Experience</a>
-                    <a href="#projects" class="hover:text-white transition-colors">Projects</a>
-                    <a href="#resume" class="text-accent-cyan hover:text-white transition-colors">Resume</a>
-                </div>
-            </div>
+        <nav class="navlinks" aria-label="Primary">
+          <a href="#about">About</a>
+          <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
+          <a href="#skills">Skills</a>
+          <a href="#contact" class="cta"><span>Contact</span></a>
         </nav>
+      </div>
+    </div>
+  </header>
 
-        <section id="home" class="min-h-screen flex flex-col justify-center px-6 md:px-24 pt-32 pb-20">
-            <div class="max-w-7xl mx-auto w-full">
-                <p class="text-sm tracking-widest uppercase text-accent-cyan mb-6 font-semibold scene-element">Applied AI Systems Engineer</p>
-                <h1 class="cinematic-title text-metallic mb-8 scene-element" style="transition-delay: 100ms;">Malak Hossam</h1>
-                <p class="text-xl md:text-2xl text-gray-400 max-w-3xl leading-relaxed mb-12 scene-element" style="transition-delay: 200ms;">
-                    Architecting production-ready AI. Specializing in persistent memory layers, low-latency multimodal interfaces, and end-to-end intelligent automation.
-                </p>
-                <div class="flex gap-6 text-sm font-medium tracking-wide scene-element" style="transition-delay: 300ms;">
-                    <a href="https://github.com/malak-hossam" target="_blank" class="px-8 py-4 bg-white text-black rounded hover:bg-gray-200 transition-colors">GitHub</a>
-                    <a href="https://linkedin.com/in/malak-hossam" target="_blank" class="px-8 py-4 border border-white/20 text-white rounded hover:bg-white/10 transition-colors">LinkedIn</a>
+  <main id="top">
+    <!-- HERO (parallax) -->
+    <section class="hero" aria-label="Hero">
+      <div class="container">
+        <div class="hero-grid">
+
+          <div>
+            <div class="badge">
+              <span class="pill"></span>
+              <b>AI Engineer</b>
+              <span>• NLP • CV • MLOps</span>
+            </div>
+
+            <h1>Malak<br/>Hossam</h1>
+            <p class="subtitle">
+              I build applied AI products — from <b>voice assistants</b> and <b>RAG pipelines</b> to
+              deep-learning models in NLP and Computer Vision. Based in Cairo, Egypt.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn primary" href="#projects">View Projects →</a>
+              <a class="btn" href="Malak%20AI%20Engineer.pdf" target="_blank" rel="noopener">Download CV</a>
+              <a class="btn" href="https://github.com/malak-hossam" target="_blank" rel="noopener">GitHub</a>
+              <a class="btn" href="https://linkedin.com/in/malak-hossam" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+          </div>
+
+          <aside class="hero-card" aria-label="Highlights">
+            <div class="parallax" aria-hidden="true">
+              <div class="layer stars" data-speed="0.08"></div>
+              <div class="layer glow" data-speed="0.18"></div>
+              <div class="layer mountains" data-speed="0.30"></div>
+              <div class="layer mist" data-speed="0.45"></div>
+              <div class="layer hills" data-speed="0.62"></div>
+            </div>
+
+            <div class="float-tag"><i></i> Parallax Portfolio</div>
+
+            <div class="inner">
+              <p class="section-title" style="margin:0 0 8px;">Quick Snapshot</p>
+              <h2 style="margin:0 0 10px;">What I do</h2>
+              <p class="lead" style="margin:0;">
+                Production-ready AI systems with low latency, clean APIs, and measurable improvements.
+              </p>
+
+              <div class="mini">
+                <div class="chip">
+                  <b>Voice + Realtime</b>
+                  GPT Realtime API, streaming, multimodal UX
                 </div>
-            </div>
-        </section>
-
-        <section id="tickets" class="py-32 px-6 md:px-24 relative">
-            <div class="max-w-7xl mx-auto w-full">
-                <p class="text-xs tracking-widest uppercase text-gray-500 mb-4 scene-element">Experience</p>
-                <h2 class="section-title text-metallic mb-20 scene-element">Unlocking My Full Ticket Set</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="ticket-module p-10 scene-element">
-                        <span class="text-xs font-mono text-accent-violet uppercase tracking-widest mb-4 block">Module 01</span>
-                        <h3 class="text-3xl font-bold text-white mb-6">LLMs & Agentic Memory Systems</h3>
-                        <p class="text-gray-400 leading-relaxed mb-8">
-                            Built GPT Realtime-powered AI Voice Assistants with continuous context awareness. Engineered full RAG pipelines using Supabase for scalable vector search and long-term user coaching memory.
-                        </p>
-                        <div class="flex flex-wrap gap-2 text-xs font-medium text-gray-400">
-                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">FastAPI</span>
-                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">LangChain</span>
-                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">RAG</span>
-                        </div>
-                    </div>
-
-                    <div class="ticket-module p-10 scene-element" style="transition-delay: 100ms;">
-                        <span class="text-xs font-mono text-accent-cyan uppercase tracking-widest mb-4 block">Module 02</span>
-                        <h3 class="text-3xl font-bold text-white mb-6">Applied ML & Computer Vision</h3>
-                        <p class="text-gray-400 leading-relaxed mb-8">
-                            Trained custom CNN and ResNet architectures for highly accurate image classification. Improved text sentiment model accuracy by 12% through targeted hyperparameter tuning and EDA.
-                        </p>
-                        <div class="flex flex-wrap gap-2 text-xs font-medium text-gray-400">
-                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">PyTorch</span>
-                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">Computer Vision</span>
-                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">NLP</span>
-                        </div>
-                    </div>
+                <div class="chip">
+                  <b>RAG + Memory</b>
+                  Embeddings, vector search, long-term context
                 </div>
-            </div>
-        </section>
-
-        <section id="projects" class="py-32 px-6 md:px-24">
-            <div class="max-w-7xl mx-auto w-full">
-                <p class="text-xs tracking-widest uppercase text-gray-500 mb-4 scene-element">Engineered Systems</p>
-                <h2 class="section-title text-metallic mb-20 scene-element">Production-Ready AI</h2>
-                
-                <div class="space-y-6">
-                    <div class="ticket-module flex flex-col md:flex-row scene-element">
-                        <div class="w-full md:w-1/3 bg-black/40 border-r border-white/5 p-8 flex flex-col justify-center">
-                            <h3 class="text-2xl font-bold text-white mb-2">AraBART Morphology</h3>
-                            <p class="text-sm font-mono text-accent-violet">Arabic NLP Specialization</p>
-                        </div>
-                        <div class="w-full md:w-2/3 p-8 md:p-12">
-                            <p class="text-gray-400 leading-relaxed mb-8">
-                                Fine-tuned AraBART on MASAQ integrating CAMEL Tools to extract root, POS, and case features in low-resource environments. Reached 82% extraction accuracy.
-                            </p>
-                            <a href="https://github.com/malak-hossam" target="_blank" class="inline-flex items-center text-sm font-bold text-white hover:text-accent-cyan transition-colors">
-                                Review System Architecture ↗
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="ticket-module flex flex-col md:flex-row scene-element">
-                        <div class="w-full md:w-1/3 bg-black/40 border-r border-white/5 p-8 flex flex-col justify-center">
-                            <h3 class="text-2xl font-bold text-white mb-2">Lexical Analysis Engine</h3>
-                            <p class="text-sm font-mono text-accent-cyan">Backend Integration</p>
-                        </div>
-                        <div class="w-full md:w-2/3 p-8 md:p-12">
-                            <p class="text-gray-400 leading-relaxed mb-8">
-                                FastAPI microservice managing synonyms, antonyms, and plurals with Gemini/Tavily fallback protocols. Successfully reduced lookup latency by 40% for real-time querying.
-                            </p>
-                            <a href="https://github.com/malak-hossam" target="_blank" class="inline-flex items-center text-sm font-bold text-white hover:text-accent-cyan transition-colors">
-                                Review System Architecture ↗
-                            </a>
-                        </div>
-                    </div>
+                <div class="chip">
+                  <b>MLOps</b>
+                  Docker, CI/CD mindset, reproducible pipelines
                 </div>
+                <div class="chip">
+                  <b>Deep Learning</b>
+                  CNN/ResNet, BERT, LSTM, Transformers
+                </div>
+              </div>
+
+              <div class="meta" style="margin-top:14px;">
+                <span class="tag">FastAPI</span>
+                <span class="tag">LangChain</span>
+                <span class="tag">PyTorch</span>
+                <span class="tag">TensorFlow</span>
+                <span class="tag">Supabase</span>
+              </div>
             </div>
-        </section>
-        
-        <section id="resume" class="py-32 px-6 md:px-24">
-            <div class="max-w-7xl mx-auto w-full flex flex-col md:flex-row justify-center gap-8 scene-element">
-                <a href="#" class="px-8 py-5 border border-white/20 rounded-lg text-sm font-medium hover:bg-white hover:text-black transition-colors inline-block text-center">
-                    Download Official Resume PDF
-                </a>
-                <a href="mailto:malak.hossam.work@gmail.com" class="px-8 py-5 bg-accent-cyan text-black rounded-lg text-sm font-bold hover:bg-white transition-colors inline-block text-center shadow-lg shadow-cyan-500/20">
-                    Initialize Contact ↗
-                </a>
+          </aside>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="section-title">About</p>
+            <h2>AI Engineer focused on real products</h2>
+            <p class="lead">
+              BSc in Computer Science (HTI, Cairo) — GPA <b>3.87</b> (Excellent with Honor).
+              I enjoy turning research-y ideas into systems that actually ship.
+            </p>
+          </div>
+          <div class="meta">
+            <span class="tag">Cairo, Egypt</span>
+            <span class="tag">Open to roles</span>
+          </div>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Education</h3>
+            <p>
+              Higher Technological Institute (HTI), Cairo — BSc Computer Science<br/>
+              <span style="color:var(--muted2)">Sept 2021 – Aug 2025</span>
+            </p>
+          </div>
+          <div class="card">
+            <h3>Contact</h3>
+            <p>
+              <b>Phone:</b> 01204073624<br/>
+              <b>Email:</b> <a href="mailto:malak.hossam.work@gmail.com">malak.hossam.work@gmail.com</a><br/>
+              <b>Kaggle:</b> <a href="https://kaggle.com/malakhossam1" target="_blank" rel="noopener">kaggle.com/malakhossam1</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="section-title">Experience</p>
+            <h2>Internships & applied AI work</h2>
+            <p class="lead">Highlights pulled directly from your CV bullets, organized as a timeline.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="timeline">
+            <div class="titem">
+              <div class="when">Oct 2025 – Dec 2025 • Cairo, Egypt</div>
+              <p class="role">AI Engineer Intern — Prime Softworks</p>
+              <p class="place">
+                Built an advanced AI voice assistant for life coaching with text-to-text, voice-to-text, and voice-to-voice interactions.
+              </p>
+              <ul>
+                <li>Developed and deployed a low-latency multimodal assistant powered by the GPT Realtime API.</li>
+                <li>Implemented a full RAG pipeline with Supabase (embeddings, vector search, long-term memory, personalized sessions).</li>
+                <li>Built scalable backend microservices using FastAPI, Docker, and LangChain.</li>
+              </ul>
             </div>
-        </section>
-    </main>
 
-    <script>
-        const state = {
-            sy: 0, targetSy: 0, vy: 0,       // Scroll Y and Velocity Y
-            mx: 0, targetMx: 0,              // Normalized Mouse X (-1 to 1)
-            my: 0, targetMy: 0,              // Normalized Mouse Y (-1 to 1)
-            gx: window.innerWidth / 2,       // Ghost Absolute X
-            gy: window.innerHeight / 2       // Ghost Absolute Y
-        };
+            <div class="titem">
+              <div class="when">Apr 2025 – May 2025 • Cairo, Egypt</div>
+              <p class="role">AI/ML Intern — Instant Academy</p>
+              <p class="place">
+                Worked across Computer Vision + NLP: classification, Q&A, chat-with-PDF, and sentiment productionization.
+              </p>
+              <ul>
+                <li>Trained CNN/ResNet models for breast-cancer classification and improved pipelines through EDA + error analysis.</li>
+                <li>Improved sentiment model accuracy by <b>12%</b> via data cleaning and targeted hyperparameter tuning.</li>
+              </ul>
+            </div>
 
-        const canvas = document.getElementById('grid-canvas');
-        const ctx = canvas.getContext('2d');
-        const ghost = document.getElementById('ghost-cursor');
-        const root = document.documentElement;
-        
-        let gridPoints = [];
-        let touchRipples = [];
-        const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            <div class="titem">
+              <div class="when">Jan 2025 – Feb 2025 • Remote</div>
+              <p class="role">AI Level 3 Intern — Orange Digital Center (ODC)</p>
+              <p class="place">
+                Intensive deep learning + MLOps program (96 hours), final grade <b>94</b>.
+              </p>
+              <ul>
+                <li>Built RNNs, CNNs, GANs, VAEs with NLP/CV applications.</li>
+                <li>Delivered projects: Arabic Sentiment, Butterfly Classification, end-to-end deployment with Docker.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        // Input Tracking (Desktop)
-        window.addEventListener('scroll', () => { state.targetSy = window.scrollY; }, { passive: true });
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="section-title">Projects</p>
+            <h2>Selected work</h2>
+            <p class="lead">
+              These are CV-based projects — you can replace each “GitHub” with the exact repo link.
+            </p>
+          </div>
+          <div class="meta">
+            <span class="tag">NLP</span>
+            <span class="tag">Computer Vision</span>
+            <span class="tag">Deployment</span>
+          </div>
+        </div>
 
-        const updateMouseParams = (clientX, clientY) => {
-            state.targetMx = (clientX / window.innerWidth) * 2 - 1;
-            state.targetMy = (clientY / window.innerHeight) * 2 - 1;
-            state.ghostTargetX = clientX;
-            state.ghostTargetY = clientY;
-        };
+        <div class="grid cols-3">
+          <div class="card">
+            <h3>Arabic Morphology Model (AraBART)</h3>
+            <p>Fine-tuned AraBART on MASAQ with CAMeL Tools to extract root, POS, and case features; reached 82% accuracy.</p>
+            <div class="meta">
+              <span class="tag">AraBART</span><span class="tag">CAMeL Tools</span><span class="tag">NLP</span>
+            </div>
+          </div>
 
-        window.addEventListener('mousemove', (e) => updateMouseParams(e.clientX, e.clientY), { passive: true });
+          <div class="card">
+            <h3>Arabic Chatbot (Gemini + LangChain)</h3>
+            <p>Intent-aware chatbot with conversation memory; integrates morphology & lexical microservices for student Q&A.</p>
+            <div class="meta">
+              <span class="tag">LangChain</span><span class="tag">Memory</span><span class="tag">Agents</span>
+            </div>
+          </div>
 
-        // Touch Input (Mobile Parallax, Ripples & Trails)
-        window.addEventListener('touchstart', (e) => {
-            updateMouseParams(e.touches[0].clientX, e.touches[0].clientY);
-            // Pulse on touch
-            touchRipples.push({ x: e.touches[0].clientX, y: e.touches[0].clientY, radius: 0, alpha: 0.6 });
-        }, { passive: true });
+          <div class="card">
+            <h3>Lexical Analysis Agent</h3>
+            <p>FastAPI microservice for synonyms/antonyms/plurals using SQLite with Gemini/Tavily fallback; reduced lookup latency by 40%.</p>
+            <div class="meta">
+              <span class="tag">FastAPI</span><span class="tag">SQLite</span><span class="tag">Microservice</span>
+            </div>
+          </div>
 
-        window.addEventListener('touchmove', (e) => {
-            updateMouseParams(e.touches[0].clientX, e.touches[0].clientY);
-            // Drag trail
-            if(Math.random() > 0.6) {
-                 touchRipples.push({ x: e.touches[0].clientX, y: e.touches[0].clientY, radius: 0, alpha: 0.2 });
-            }
-        }, { passive: true });
+          <div class="card">
+            <h3>Arabic Sentiment Classification (BERT & LSTM)</h3>
+            <p>Fine-tuned sentiment models on Arabic data; achieved 85% accuracy.</p>
+            <div class="meta">
+              <span class="tag">BERT</span><span class="tag">LSTM</span><span class="tag">NLP</span>
+            </div>
+          </div>
 
-        // Build Grid for L1
-        function initGrid() {
-            canvas.width = window.innerWidth * 1.2; 
-            canvas.height = window.innerHeight * 1.2;
-            gridPoints = [];
-            for (let x = 0; x < canvas.width; x += 40) {
-                for (let y = 0; y < canvas.height; y += 40) {
-                    gridPoints.push({ x, y, baseX: x, baseY: y });
-                }
-            }
-        }
+          <div class="card">
+            <h3>Butterfly Image Classification (CNN, ResNet)</h3>
+            <p>Custom CNN 75%; ResNet fine-tuned to 94% (PyTorch, OpenCV).</p>
+            <div class="meta">
+              <span class="tag">PyTorch</span><span class="tag">ResNet</span><span class="tag">OpenCV</span>
+            </div>
+          </div>
 
-        // Core 6-Layer Engine Loop
-        let lastSy = 0;
-        function engineLoop() {
-            if (!isReducedMotion) {
-                // Smooth Lerp Calculations
-                state.sy += (state.targetSy - state.sy) * 0.1;
-                state.mx += (state.targetMx - state.mx) * 0.05;
-                state.my += (state.targetMy - state.my) * 0.05;
-                
-                // Calculate Scroll Velocity for Mobile Parallax effect
-                state.vy = state.sy - lastSy;
-                lastSy = state.sy;
+          <div class="card">
+            <h3>End-to-End ML Deployment with Docker</h3>
+            <p>Containerized an ML model and set up CI/CD to Docker Hub for reproducibility and fast updates.</p>
+            <div class="meta">
+              <span class="tag">Docker</span><span class="tag">CI/CD</span><span class="tag">MLOps</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-                // L3 Ghost Lerp (80-150ms perceived delay via ~0.08 interpolation)
-                if(state.ghostTargetX) {
-                    state.gx += (state.ghostTargetX - state.gx) * 0.08;
-                    state.gy += (state.ghostTargetY - state.gy) * 0.08;
-                    ghost.style.left = `${state.gx}px`;
-                    ghost.style.top = `${state.gy}px`;
-                }
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="section-title">Skills</p>
+            <h2>Tools I use to ship</h2>
+            <p class="lead">Grouped from your CV: languages, libraries, architectures, and tooling.</p>
+          </div>
+        </div>
 
-                // Inject Math into CSS Variables for GPU Hardware Acceleration
-                root.style.setProperty('--sy', `${state.sy}px`);
-                root.style.setProperty('--mx', state.mx);
-                root.style.setProperty('--my', state.my);
-            }
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Programming</h3>
+            <p>Python • C++ • Java</p>
+            <div class="meta">
+              <span class="tag">Clean APIs</span>
+              <span class="tag">Reproducible code</span>
+            </div>
+          </div>
 
-            // Canvas Render (L1 grid & Touch Mechanics)
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(139, 146, 165, 0.35)';
-            
-            for (let p of gridPoints) {
-                let targetX = p.baseX;
-                let targetY = p.baseY;
+          <div class="card">
+            <h3>Libraries & Tools</h3>
+            <p>PyTorch • TensorFlow • Keras • Plotly • Docker • Git • FastAPI • LangChain • CrewAI</p>
+          </div>
 
-                // Apply scroll velocity skewing to dots on fast mobile scrolls
-                if (Math.abs(state.vy) > 2) {
-                    targetY += state.vy * 0.1; 
-                }
+          <div class="card">
+            <h3>ML Architectures</h3>
+            <p>CNN • RNN/LSTM • Transformers (BERT, GPT) • GANs • VAEs</p>
+          </div>
 
-                p.x += (targetX - p.x) * 0.1;
-                p.y += (targetY - p.y) * 0.1;
+          <div class="card">
+            <h3>Volunteering</h3>
+            <p>
+              Sailfish ROV Team — Image Processing Member (2022–2023).<br/>
+              Built and optimized underwater object detection pipelines with OpenCV + Python.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
-                ctx.fill();
-            }
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="section-title">Contact</p>
+            <h2>Let’s build something</h2>
+            <p class="lead">Email is usually best. If you want, I can also help you add a contact form (Formspree / Netlify Forms).</p>
+          </div>
+        </div>
 
-            // Render Touch Ripples
-            for(let i = touchRipples.length - 1; i >= 0; i--) {
-                let r = touchRipples[i];
-                r.radius += 3;
-                r.alpha -= 0.02;
-                ctx.beginPath();
-                ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(34, 211, 238, ${r.alpha})`; // Cyan ripple
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-                if(r.alpha <= 0) touchRipples.splice(i, 1);
-            }
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Reach me</h3>
+            <p>
+              <b>Email:</b> <a href="mailto:malak.hossam.work@gmail.com">malak.hossam.work@gmail.com</a><br/>
+              <b>Phone:</b> 01204073624<br/>
+              <b>GitHub:</b> <a href="https://github.com/malak-hossam" target="_blank" rel="noopener">github.com/malak-hossam</a><br/>
+              <b>LinkedIn:</b> <a href="https://linkedin.com/in/malak-hossam" target="_blank" rel="noopener">linkedin.com/in/malak-hossam</a>
+            </p>
+            <div class="meta">
+              <a class="btn primary" href="mailto:malak.hossam.work@gmail.com">Email me →</a>
+              <a class="btn" href="Malak%20AI%20Engineer.pdf" target="_blank" rel="noopener">Open CV</a>
+            </div>
+          </div>
 
-            requestAnimationFrame(engineLoop);
-        }
+          <div class="card">
+            <h3>Small details that feel “premium”</h3>
+            <p>
+              • Glassmorphism cards with blur<br/>
+              • Parallax layers reacting to scroll<br/>
+              • Smooth anchor navigation<br/>
+              • Reduced-motion support for accessibility
+            </p>
+            <div class="meta">
+              <span class="tag">GitHub Pages</span>
+              <span class="tag">One-file setup</span>
+              <span class="tag">Mobile-ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        window.addEventListener('resize', initGrid);
-        initGrid();
-        requestAnimationFrame(engineLoop);
+    <footer>
+      <div class="container">
+        <div class="foot">
+          <div>© <span id="year"></span> Malak Hossam</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="tag" href="#top">Back to top ↑</a>
+            <a class="tag" href="https://kaggle.com/malakhossam1" target="_blank" rel="noopener">Kaggle</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
 
-        // Content Reveal Observer
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+  <script>
+    // ====== Year ======
+    document.getElementById("year").textContent = new Date().getFullYear();
 
-        document.querySelectorAll('.scene-element').forEach(el => observer.observe(el));
-    </script>
+    // ====== Parallax (scroll-driven) ======
+    // This is the “parallax scrolling” part: each .layer moves at a different speed.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const layers = Array.from(document.querySelectorAll(".layer[data-speed]"));
+    const hero = document.querySelector(".hero");
+    let ticking = false;
+
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+    function onScroll(){
+      if (reduceMotion) return;
+      if (!hero) return;
+
+      const rect = hero.getBoundingClientRect();
+      const viewH = window.innerHeight || document.documentElement.clientHeight;
+
+      // Progress: 0 when hero top at top, 1 when hero bottom at top
+      const progress = clamp((0 - rect.top) / Math.max(1, rect.height), 0, 1);
+
+      layers.forEach(layer => {
+        const speed = parseFloat(layer.dataset.speed || "0.2");
+        // Translate up as user scrolls down (negative Y)
+        const y = -progress * 220 * speed;
+        layer.style.transform = `translate3d(0, ${y}px, 0)`;
+      });
+
+      ticking = false;
+    }
+
+    window.addEventListener("scroll", () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(onScroll);
+    }, { passive: true });
+
+    // Run once on load
+    onScroll();
+  </script>
 </body>
 </html>
