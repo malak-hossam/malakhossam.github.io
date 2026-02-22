@@ -15,10 +15,11 @@
             --accent-violet: #818cf8;
             --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
             
-            /* Dynamic variables updated via JS */
-            --scroll-y: 0px;
-            --mouse-x: 0;
-            --mouse-y: 0;
+            /* Engine Variables */
+            --sy: 0px;     /* Scroll Y */
+            --vy: 0px;     /* Scroll Velocity */
+            --mx: 0px;     /* Mouse X */
+            --my: 0px;     /* Mouse Y */
         }
 
         body { 
@@ -27,144 +28,145 @@
             color: var(--metallic-light); 
             overflow-x: hidden;
             margin: 0;
-            cursor: auto; /* Real cursor always visible */
+            cursor: auto; /* L4 Readability Priority: Keep cursor visible */
         }
 
-        /* --- PARALLAX LAYERS --- */
+        /* --- THE 6-LAYER SYSTEM --- */
         
-        /* Layer 0: Background Canvas (Slowest, reacts to scroll and mouse) */
-        #layer-bg { 
-            position: fixed; top: -10%; left: -10%; width: 120vw; height: 120vh; z-index: -3; 
+        /* L0: Deep Gradient (0.10x) */
+        #L0-gradient {
+            position: fixed; top: -20%; left: -20%; width: 140vw; height: 140vh; z-index: -5;
+            background: radial-gradient(circle at 50% 30%, rgba(10, 10, 15, 1) 0%, var(--bg-base) 100%);
+            transform: translateY(calc(var(--sy) * -0.10));
             pointer-events: none;
-            transform: translate3d(calc(var(--mouse-x) * -30px), calc(var(--scroll-y) * -0.15 + var(--mouse-y) * -30px), 0);
             will-change: transform;
         }
 
-        /* Layer 1: Mid Ambient Particles (Moderate speed, inverse mouse reaction) */
-        #layer-mid {
+        /* L1: Dotted Grid (0.18x + 20% pointer) */
+        #L1-grid {
+            position: fixed; top: -10%; left: -10%; width: 120vw; height: 120vh; z-index: -4;
+            transform: translate3d(calc(var(--mx) * -20px), calc(var(--sy) * -0.18 + var(--my) * -20px), 0);
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        /* L2: Accent Particles/Orbs (0.28x + 45% pointer) */
+        #L2-particles {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3;
+            transform: translate3d(calc(var(--mx) * -45px), calc(var(--sy) * -0.28 + var(--my) * -45px), 0);
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        /* L3: Ghost Aura (0.35x + 80-150ms delay managed in JS) */
+        #L3-ghost {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+            transform: translateY(calc(var(--sy) * -0.35));
             pointer-events: none;
-            transform: translate3d(calc(var(--mouse-x) * 20px), calc(var(--scroll-y) * -0.3 + var(--mouse-y) * 20px), 0);
             will-change: transform;
         }
 
-        /* Layer 2: Content (Native scroll, elements within have individual parallax) */
-        .layer-content {
+        /* L4: Content (1.00x Native Scroll - Readability Priority) */
+        #L4-content {
             position: relative; z-index: 10;
         }
 
-        /* Layer 3: Foreground Ghost (Fastest, follows cursor with delay) */
-        #layer-fg {
+        /* L5: Foreground Highlights (1.12x Subtle) */
+        #L5-highlights {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 50;
+            transform: translateY(calc(var(--sy) * -1.12));
             pointer-events: none;
+            will-change: transform;
         }
 
-        /* Ambient Glow Orbs (Mid Layer) */
-        .ambient-orb {
-            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.15;
-        }
-        .orb-1 { top: 20%; left: 10%; width: 500px; height: 500px; background: var(--accent-cyan); }
-        .orb-2 { top: 60%; right: 5%; width: 600px; height: 600px; background: var(--accent-violet); }
+        /* --- VISUAL ASSETS --- */
+        .ambient-orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.12; }
+        .orb-1 { top: 10%; left: 20%; width: 400px; height: 400px; background: var(--accent-cyan); }
+        .orb-2 { top: 60%; right: 10%; width: 500px; height: 500px; background: var(--accent-violet); }
 
-        /* Ghost Cursor (Foreground) */
         #ghost-cursor {
-            position: absolute; width: 400px; height: 400px; border-radius: 50%;
-            background: radial-gradient(circle, rgba(129, 140, 248, 0.06) 0%, rgba(255,255,255,0) 60%);
+            position: absolute; width: 500px; height: 500px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(129, 140, 248, 0.05) 0%, rgba(255,255,255,0) 60%);
             transform: translate(-50%, -50%);
-            will-change: transform;
-            filter: blur(20px);
+            filter: blur(25px);
+            will-change: left, top;
         }
 
-        /* --- CINEMATIC TYPOGRAPHY --- */
-        .cinematic-title { 
-            font-size: clamp(3.5rem, 8vw, 8rem); 
-            line-height: 1.05; 
-            letter-spacing: -0.04em; 
-            font-weight: 800;
-            /* Text parallax: Moves slightly opposite to scroll direction */
-            transform: translate3d(calc(var(--mouse-x) * 15px), calc(var(--scroll-y) * 0.1), 0);
-            will-change: transform;
+        .fg-dust {
+            position: absolute; border-radius: 50%; background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 20px 2px rgba(255,255,255,0.4); filter: blur(2px);
         }
+
+        /* --- TYPOGRAPHY & CARDS --- */
+        .cinematic-title { font-size: clamp(3.5rem, 8vw, 8rem); line-height: 1.05; letter-spacing: -0.04em; font-weight: 800; }
+        .section-title { font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; }
         
-        .section-title { 
-            font-size: clamp(2.5rem, 6vw, 5rem); 
-            line-height: 1.1; 
-            letter-spacing: -0.03em;
-            font-weight: 800;
-        }
-
         .text-metallic {
             background: linear-gradient(135deg, #ffffff 0%, #6b7280 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* --- TICKET SYSTEM (Cards) --- */
         .ticket-module {
-            background: linear-gradient(180deg, rgba(20, 20, 25, 0.6) 0%, rgba(10, 10, 12, 0.4) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            backdrop-filter: blur(16px);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.6s var(--ease-out-expo), border-color 0.4s ease;
+            background: linear-gradient(180deg, rgba(20, 20, 25, 0.7) 0%, rgba(10, 10, 12, 0.5) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px; backdrop-filter: blur(16px);
+            transition: transform 0.5s var(--ease-out-expo), border-color 0.4s ease, box-shadow 0.4s ease;
         }
         .ticket-module:hover {
             border-color: rgba(129, 140, 248, 0.3);
-            transform: translateY(-8px) scale(1.01);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
         }
 
-        /* Internal Card Parallax */
-        .ticket-content {
-            transform: translate3d(calc(var(--mouse-x) * 5px), calc(var(--mouse-y) * 5px), 0);
-            transition: transform 0.1s linear;
-        }
-
-        /* --- MOTION REVEAL --- */
         .scene-element {
-            opacity: 0;
-            transform: translateY(40px);
+            opacity: 0; transform: translateY(30px);
             transition: opacity 1s var(--ease-out-expo), transform 1s var(--ease-out-expo);
         }
-        .scene-element.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .scene-element.active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
-    <canvas id="layer-bg"></canvas>
+    <div id="L0-gradient"></div>
 
-    <div id="layer-mid">
+    <div id="L1-grid">
+        <canvas id="grid-canvas"></canvas>
+    </div>
+
+    <div id="L2-particles">
         <div class="ambient-orb orb-1"></div>
         <div class="ambient-orb orb-2"></div>
     </div>
 
-    <div id="layer-fg">
+    <div id="L3-ghost">
         <div id="ghost-cursor"></div>
     </div>
 
-    <nav class="fixed top-0 w-full z-50 px-8 py-6 mix-blend-difference scene-element active">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <span class="font-bold tracking-tighter text-white text-xl">MALAK.H</span>
-            <div class="hidden md:flex gap-8 text-xs uppercase tracking-widest text-gray-400 font-medium">
-                <a href="#home" class="hover:text-white transition-colors">Home</a>
-                <a href="#tickets" class="hover:text-white transition-colors">Experience</a>
-                <a href="#projects" class="hover:text-white transition-colors">Projects</a>
-                <a href="#resume" class="text-accent-violet hover:text-white transition-colors">Resume</a>
-            </div>
-        </div>
-    </nav>
+    <div id="L5-highlights">
+        <div class="fg-dust" style="top: 150vh; left: 15%; width: 6px; height: 6px;"></div>
+        <div class="fg-dust" style="top: 250vh; right: 20%; width: 4px; height: 4px;"></div>
+        <div class="fg-dust" style="top: 380vh; left: 40%; width: 8px; height: 8px;"></div>
+    </div>
 
-    <main class="layer-content">
+    <main id="L4-content">
         
+        <nav class="fixed top-0 w-full z-50 px-8 py-6 mix-blend-difference scene-element active">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <span class="font-bold tracking-tighter text-white text-xl">MALAK.H</span>
+                <div class="hidden md:flex gap-8 text-xs uppercase tracking-widest text-gray-400 font-medium">
+                    <a href="#home" class="hover:text-white transition-colors">Home</a>
+                    <a href="#tickets" class="hover:text-white transition-colors">Experience</a>
+                    <a href="#projects" class="hover:text-white transition-colors">Projects</a>
+                    <a href="#resume" class="text-accent-cyan hover:text-white transition-colors">Resume</a>
+                </div>
+            </div>
+        </nav>
+
         <section id="home" class="min-h-screen flex flex-col justify-center px-6 md:px-24 pt-32 pb-20">
             <div class="max-w-7xl mx-auto w-full">
                 <p class="text-sm tracking-widest uppercase text-accent-cyan mb-6 font-semibold scene-element">Applied AI Systems Engineer</p>
                 <h1 class="cinematic-title text-metallic mb-8 scene-element" style="transition-delay: 100ms;">Malak Hossam</h1>
-                <p class="text-xl md:text-3xl text-gray-400 max-w-3xl leading-relaxed mb-12 scene-element" style="transition-delay: 200ms;">
+                <p class="text-xl md:text-2xl text-gray-400 max-w-3xl leading-relaxed mb-12 scene-element" style="transition-delay: 200ms;">
                     Architecting production-ready AI. Specializing in persistent memory layers, low-latency multimodal interfaces, and end-to-end intelligent automation.
                 </p>
                 <div class="flex gap-6 text-sm font-medium tracking-wide scene-element" style="transition-delay: 300ms;">
@@ -180,37 +182,31 @@
                 <h2 class="section-title text-metallic mb-20 scene-element">Unlocking My Full Ticket Set</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    
                     <div class="ticket-module p-10 scene-element">
-                        <div class="ticket-content">
-                            <span class="text-xs font-mono text-accent-violet uppercase tracking-widest mb-4 block">Module 01</span>
-                            <h3 class="text-3xl font-bold text-white mb-6">LLMs & Agentic Memory Systems</h3>
-                            <p class="text-gray-400 leading-relaxed mb-8">
-                                Built GPT Realtime-powered AI Voice Assistants with continuous context awareness. Engineered full RAG pipelines using Supabase for scalable vector search and long-term user coaching memory.
-                            </p>
-                            <div class="flex flex-wrap gap-2 text-xs font-medium text-gray-400">
-                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">FastAPI</span>
-                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">LangChain</span>
-                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">RAG</span>
-                            </div>
+                        <span class="text-xs font-mono text-accent-violet uppercase tracking-widest mb-4 block">Module 01</span>
+                        <h3 class="text-3xl font-bold text-white mb-6">LLMs & Agentic Memory Systems</h3>
+                        <p class="text-gray-400 leading-relaxed mb-8">
+                            Built GPT Realtime-powered AI Voice Assistants with continuous context awareness. Engineered full RAG pipelines using Supabase for scalable vector search and long-term user coaching memory.
+                        </p>
+                        <div class="flex flex-wrap gap-2 text-xs font-medium text-gray-400">
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">FastAPI</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">LangChain</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">RAG</span>
                         </div>
                     </div>
 
                     <div class="ticket-module p-10 scene-element" style="transition-delay: 100ms;">
-                        <div class="ticket-content">
-                            <span class="text-xs font-mono text-accent-cyan uppercase tracking-widest mb-4 block">Module 02</span>
-                            <h3 class="text-3xl font-bold text-white mb-6">Applied ML & Computer Vision</h3>
-                            <p class="text-gray-400 leading-relaxed mb-8">
-                                Trained custom CNN and ResNet architectures for highly accurate image classification. Improved text sentiment model accuracy by 12% through targeted hyperparameter tuning and EDA.
-                            </p>
-                            <div class="flex flex-wrap gap-2 text-xs font-medium text-gray-400">
-                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">PyTorch</span>
-                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">Deep Learning</span>
-                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">NLP</span>
-                            </div>
+                        <span class="text-xs font-mono text-accent-cyan uppercase tracking-widest mb-4 block">Module 02</span>
+                        <h3 class="text-3xl font-bold text-white mb-6">Applied ML & Computer Vision</h3>
+                        <p class="text-gray-400 leading-relaxed mb-8">
+                            Trained custom CNN and ResNet architectures for highly accurate image classification. Improved text sentiment model accuracy by 12% through targeted hyperparameter tuning and EDA.
+                        </p>
+                        <div class="flex flex-wrap gap-2 text-xs font-medium text-gray-400">
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">PyTorch</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">Computer Vision</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded">NLP</span>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -222,11 +218,11 @@
                 
                 <div class="space-y-6">
                     <div class="ticket-module flex flex-col md:flex-row scene-element">
-                        <div class="w-full md:w-1/3 bg-black/50 border-r border-white/5 p-8 flex flex-col justify-center">
+                        <div class="w-full md:w-1/3 bg-black/40 border-r border-white/5 p-8 flex flex-col justify-center">
                             <h3 class="text-2xl font-bold text-white mb-2">AraBART Morphology</h3>
                             <p class="text-sm font-mono text-accent-violet">Arabic NLP Specialization</p>
                         </div>
-                        <div class="w-full md:w-2/3 p-8 md:p-12 ticket-content">
+                        <div class="w-full md:w-2/3 p-8 md:p-12">
                             <p class="text-gray-400 leading-relaxed mb-8">
                                 Fine-tuned AraBART on MASAQ integrating CAMEL Tools to extract root, POS, and case features in low-resource environments. Reached 82% extraction accuracy.
                             </p>
@@ -237,11 +233,11 @@
                     </div>
 
                     <div class="ticket-module flex flex-col md:flex-row scene-element">
-                        <div class="w-full md:w-1/3 bg-black/50 border-r border-white/5 p-8 flex flex-col justify-center">
-                            <h3 class="text-2xl font-bold text-white mb-2">Lexical Analysis Microservice</h3>
+                        <div class="w-full md:w-1/3 bg-black/40 border-r border-white/5 p-8 flex flex-col justify-center">
+                            <h3 class="text-2xl font-bold text-white mb-2">Lexical Analysis Engine</h3>
                             <p class="text-sm font-mono text-accent-cyan">Backend Integration</p>
                         </div>
-                        <div class="w-full md:w-2/3 p-8 md:p-12 ticket-content">
+                        <div class="w-full md:w-2/3 p-8 md:p-12">
                             <p class="text-gray-400 leading-relaxed mb-8">
                                 FastAPI microservice managing synonyms, antonyms, and plurals with Gemini/Tavily fallback protocols. Successfully reduced lookup latency by 40% for real-time querying.
                             </p>
@@ -253,34 +249,29 @@
                 </div>
             </div>
         </section>
-
+        
         <section id="resume" class="py-32 px-6 md:px-24">
-            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div class="ticket-module p-12 scene-element">
-                    <h2 class="text-3xl font-bold text-white mb-6">System Documentation</h2>
-                    <p class="text-gray-400 mb-8 leading-relaxed">Access my full academic background (BSc Computer Science, 3.87 GPA) and end-to-end technical history.</p>
-                    <a href="#" class="px-6 py-3 border border-white/20 rounded text-sm font-medium hover:bg-white hover:text-black transition-colors inline-block">Download Resume PDF</a>
-                </div>
-                
-                <div class="ticket-module p-12 scene-element" style="transition-delay: 100ms;">
-                    <h2 class="text-3xl font-bold text-white mb-6">Initialize Contact</h2>
-                    <p class="text-gray-400 mb-8 leading-relaxed">Open to discussions regarding AI systems architecture, intelligent backend engineering, and MLOps.</p>
-                    <a href="mailto:malak.hossam.work@gmail.com" class="px-6 py-3 bg-white text-black rounded text-sm font-medium hover:bg-gray-200 transition-colors inline-block">malak.hossam.work@gmail.com ↗</a>
-                </div>
+            <div class="max-w-7xl mx-auto w-full flex flex-col md:flex-row justify-center gap-8 scene-element">
+                <a href="#" class="px-8 py-5 border border-white/20 rounded-lg text-sm font-medium hover:bg-white hover:text-black transition-colors inline-block text-center">
+                    Download Official Resume PDF
+                </a>
+                <a href="mailto:malak.hossam.work@gmail.com" class="px-8 py-5 bg-accent-cyan text-black rounded-lg text-sm font-bold hover:bg-white transition-colors inline-block text-center shadow-lg shadow-cyan-500/20">
+                    Initialize Contact ↗
+                </a>
             </div>
         </section>
     </main>
 
     <script>
-        // System State
         const state = {
-            scrollY: 0, targetScrollY: 0,
-            mouseX: 0, targetMouseX: 0,
-            mouseY: 0, targetMouseY: 0,
-            ghostX: window.innerWidth / 2, ghostY: window.innerHeight / 2
+            sy: 0, targetSy: 0, vy: 0,       // Scroll Y and Velocity Y
+            mx: 0, targetMx: 0,              // Normalized Mouse X (-1 to 1)
+            my: 0, targetMy: 0,              // Normalized Mouse Y (-1 to 1)
+            gx: window.innerWidth / 2,       // Ghost Absolute X
+            gy: window.innerHeight / 2       // Ghost Absolute Y
         };
 
-        const canvas = document.getElementById('layer-bg');
+        const canvas = document.getElementById('grid-canvas');
         const ctx = canvas.getContext('2d');
         const ghost = document.getElementById('ghost-cursor');
         const root = document.documentElement;
@@ -289,36 +280,36 @@
         let touchRipples = [];
         const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        // Input Tracking
-        window.addEventListener('scroll', () => {
-            state.targetScrollY = window.scrollY;
-        }, { passive: true });
+        // Input Tracking (Desktop)
+        window.addEventListener('scroll', () => { state.targetSy = window.scrollY; }, { passive: true });
 
         const updateMouseParams = (clientX, clientY) => {
-            // Normalize mouse coordinates from -1 to 1 based on screen center
-            state.targetMouseX = (clientX / window.innerWidth) * 2 - 1;
-            state.targetMouseY = (clientY / window.innerHeight) * 2 - 1;
-            
-            // Raw coordinates for ghost cursor
+            state.targetMx = (clientX / window.innerWidth) * 2 - 1;
+            state.targetMy = (clientY / window.innerHeight) * 2 - 1;
             state.ghostTargetX = clientX;
             state.ghostTargetY = clientY;
         };
 
         window.addEventListener('mousemove', (e) => updateMouseParams(e.clientX, e.clientY), { passive: true });
 
-        // Touch Input (Mobile Parallax & Ripples)
+        // Touch Input (Mobile Parallax, Ripples & Trails)
         window.addEventListener('touchstart', (e) => {
             updateMouseParams(e.touches[0].clientX, e.touches[0].clientY);
-            touchRipples.push({ x: e.touches[0].clientX, y: e.touches[0].clientY, radius: 0, alpha: 0.5 });
+            // Pulse on touch
+            touchRipples.push({ x: e.touches[0].clientX, y: e.touches[0].clientY, radius: 0, alpha: 0.6 });
         }, { passive: true });
 
         window.addEventListener('touchmove', (e) => {
             updateMouseParams(e.touches[0].clientX, e.touches[0].clientY);
+            // Drag trail
+            if(Math.random() > 0.6) {
+                 touchRipples.push({ x: e.touches[0].clientX, y: e.touches[0].clientY, radius: 0, alpha: 0.2 });
+            }
         }, { passive: true });
 
-        // Initialize Background Grid
+        // Build Grid for L1
         function initGrid() {
-            canvas.width = window.innerWidth * 1.2; // Oversize canvas for parallax overflow
+            canvas.width = window.innerWidth * 1.2; 
             canvas.height = window.innerHeight * 1.2;
             gridPoints = [];
             for (let x = 0; x < canvas.width; x += 40) {
@@ -328,45 +319,62 @@
             }
         }
 
-        // Main Hardware-Accelerated Render Loop
+        // Core 6-Layer Engine Loop
+        let lastSy = 0;
         function engineLoop() {
             if (!isReducedMotion) {
-                // Linear Interpolation (Lerp) for absolute smoothness
-                state.scrollY += (state.targetScrollY - state.scrollY) * 0.08;
-                state.mouseX += (state.targetMouseX - state.mouseX) * 0.05;
-                state.mouseY += (state.targetMouseY - state.mouseY) * 0.05;
+                // Smooth Lerp Calculations
+                state.sy += (state.targetSy - state.sy) * 0.1;
+                state.mx += (state.targetMx - state.mx) * 0.05;
+                state.my += (state.targetMy - state.my) * 0.05;
+                
+                // Calculate Scroll Velocity for Mobile Parallax effect
+                state.vy = state.sy - lastSy;
+                lastSy = state.sy;
 
-                // Ghost Cursor Lerp (Delayed chase)
+                // L3 Ghost Lerp (80-150ms perceived delay via ~0.08 interpolation)
                 if(state.ghostTargetX) {
-                    state.ghostX += (state.ghostTargetX - state.ghostX) * 0.08;
-                    state.ghostY += (state.ghostTargetY - state.ghostY) * 0.08;
-                    ghost.style.transform = `translate(${state.ghostX}px, ${state.ghostY}px)`;
+                    state.gx += (state.ghostTargetX - state.gx) * 0.08;
+                    state.gy += (state.ghostTargetY - state.gy) * 0.08;
+                    ghost.style.left = `${state.gx}px`;
+                    ghost.style.top = `${state.gy}px`;
                 }
 
-                // Inject interpolated values into CSS variables for layer shifting
-                root.style.setProperty('--scroll-y', `${state.scrollY}px`);
-                root.style.setProperty('--mouse-x', state.mouseX);
-                root.style.setProperty('--mouse-y', state.mouseY);
+                // Inject Math into CSS Variables for GPU Hardware Acceleration
+                root.style.setProperty('--sy', `${state.sy}px`);
+                root.style.setProperty('--mx', state.mx);
+                root.style.setProperty('--my', state.my);
             }
 
-            // Draw Parallax Canvas Grid
+            // Canvas Render (L1 grid & Touch Mechanics)
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(139, 146, 165, 0.3)';
+            ctx.fillStyle = 'rgba(139, 146, 165, 0.35)';
             
             for (let p of gridPoints) {
+                let targetX = p.baseX;
+                let targetY = p.baseY;
+
+                // Apply scroll velocity skewing to dots on fast mobile scrolls
+                if (Math.abs(state.vy) > 2) {
+                    targetY += state.vy * 0.1; 
+                }
+
+                p.x += (targetX - p.x) * 0.1;
+                p.y += (targetY - p.y) * 0.1;
+
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+                ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
                 ctx.fill();
             }
 
-            // Draw Touch Ripples
+            // Render Touch Ripples
             for(let i = touchRipples.length - 1; i >= 0; i--) {
                 let r = touchRipples[i];
-                r.radius += 2.5;
-                r.alpha -= 0.015;
+                r.radius += 3;
+                r.alpha -= 0.02;
                 ctx.beginPath();
                 ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(129, 140, 248, ${r.alpha})`;
+                ctx.strokeStyle = `rgba(34, 211, 238, ${r.alpha})`; // Cyan ripple
                 ctx.lineWidth = 1.5;
                 ctx.stroke();
                 if(r.alpha <= 0) touchRipples.splice(i, 1);
@@ -375,12 +383,11 @@
             requestAnimationFrame(engineLoop);
         }
 
-        // Initialize Engine
         window.addEventListener('resize', initGrid);
         initGrid();
         requestAnimationFrame(engineLoop);
 
-        // Scene Reveal Observer
+        // Content Reveal Observer
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
