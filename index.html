@@ -41,62 +41,85 @@
     .container{ width:min(var(--max), calc(100% - 40px)); margin:0 auto; }
 
     /* =========================================
-       ✅ MORPHING BACKGROUND (scroll + mouse)
+       ✅ FULL BACKGROUND SYSTEM
+       - Video (hero only) + Color shapes (next sections)
        ========================================= */
-    .bg{
+    .bg-wrap{
       position:fixed;
       inset:0;
       z-index:-50;
-      background: radial-gradient(1200px 700px at 70% -10%, rgba(181,155,255,.18), transparent 60%),
-                  radial-gradient(900px 700px at 15% 10%, rgba(124,243,255,.10), transparent 55%),
-                  radial-gradient(900px 600px at 85% 40%, rgba(255,179,214,.08), transparent 60%),
-                  linear-gradient(180deg, #05040c, #070510 35%, #120a25);
       overflow:hidden;
+      background:#05040c;
     }
 
-    /* Layer that will morph */
-    .blob{
+    /* Video layer */
+    .bg-video{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform: scale(1.06);
+      filter: brightness(.62) contrast(1.07) saturate(1.06) blur(1px);
+      opacity: 0;
+      transition: opacity 520ms ease;
+      will-change: opacity;
+    }
+
+    /* Color layers (the connected shapes) */
+    .color-base{
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, #05040c, #070510 35%, #120a25);
+      opacity: 1;
+    }
+
+    /* Big “circle/spot” that grows between sections */
+    .spot{
       position:absolute;
       left:50%;
-      top:50%;
+      top:52%;
       width: 900px;
       height: 900px;
       border-radius: 999px;
-      transform: translate(-50%, -50%);
-      filter: blur(0px);
+      transform: translate(-50%,-50%);
       opacity: .95;
-      will-change: transform, width, height, filter, opacity;
-      transition: opacity 220ms linear;
+      will-change: transform, width, height, left, top, opacity, filter;
       pointer-events:none;
+      mix-blend-mode: screen;
     }
 
-    /* Secondary blob for depth */
-    .blob2{
+    /* Secondary spot for depth */
+    .spot2{
       position:absolute;
       left:50%;
-      top:50%;
-      width: 600px;
-      height: 600px;
+      top:52%;
+      width: 620px;
+      height: 620px;
       border-radius: 999px;
-      transform: translate(-50%, -50%);
-      opacity: .80;
-      will-change: transform, width, height, filter, opacity;
+      transform: translate(-50%,-50%);
+      opacity: .70;
+      will-change: transform, width, height, left, top, opacity, filter;
       pointer-events:none;
+      mix-blend-mode: screen;
     }
 
-    /* Soft vignette for readability */
-    .vignette{
-      position:absolute;
-      inset:-20%;
-      background: radial-gradient(1200px 800px at 50% 30%, rgba(0,0,0,.12), rgba(0,0,0,.72));
-      pointer-events:none;
-      opacity:.95;
-    }
-
-    /* Tiny stars */
-    .stars{
+    /* Readability overlay */
+    .overlay{
       position:absolute;
       inset:0;
+      background:
+        radial-gradient(900px 420px at 15% 20%, rgba(124,243,255,.10), transparent 60%),
+        radial-gradient(900px 420px at 85% 25%, rgba(181,155,255,.14), transparent 62%),
+        radial-gradient(900px 420px at 65% 80%, rgba(255,179,214,.09), transparent 62%),
+        linear-gradient(180deg, rgba(7,5,16,.20), rgba(7,5,16,.82));
+      pointer-events:none;
+      z-index: 5;
+    }
+
+    /* Stars (like reference feel) */
+    .stars{
+      position:absolute; inset:0;
       background:
         radial-gradient(2px 2px at 12% 22%, rgba(255,255,255,.85), transparent 55%),
         radial-gradient(1.5px 1.5px at 26% 74%, rgba(255,255,255,.70), transparent 55%),
@@ -105,7 +128,7 @@
         radial-gradient(1px 1px at 52% 48%, rgba(255,255,255,.50), transparent 55%);
       opacity:.14;
       pointer-events:none;
-      mix-blend-mode: screen;
+      z-index: 6;
     }
 
     /* =========================================
@@ -147,13 +170,13 @@
     main{ padding-top:var(--headerH); }
 
     /* =========================================
-       Sections – screen-like transitions
+       Sections (full “scenes” like reference)
        ========================================= */
     section{
       min-height: calc(100vh - var(--headerH));
       display:flex;
       align-items:center;
-      padding: 86px 0;
+      padding: 88px 0;
       position:relative;
     }
 
@@ -184,10 +207,8 @@
       max-width:74ch;
     }
 
-    /* Hero: no card */
-    .hero-wrap{
-      max-width: 860px;
-    }
+    /* ✅ Hero: no card */
+    .hero-wrap{ max-width: 860px; }
 
     .actions{
       display:flex; gap:12px; flex-wrap:wrap;
@@ -212,23 +233,6 @@
       border-color: rgba(181,155,255,.35);
     }
 
-    /* icons */
-    .iconbar{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; direction:ltr; }
-    .icon{
-      width:40px; height:40px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.20);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      display:grid; place-items:center;
-      box-shadow: var(--shadow);
-      transition:160ms ease;
-    }
-    .icon:hover{ transform: translateY(-1px); border-color: rgba(181,155,255,.35); }
-    .icon svg{ width:18px; height:18px; opacity:.9; }
-
-    /* glass panels for other sections */
     .panel{
       border-radius: var(--r2);
       border:1px solid rgba(255,255,255,.14);
@@ -240,7 +244,7 @@
       max-width: 920px;
     }
 
-    /* Projects: hover pop (no click) */
+    /* Projects: hover pop */
     .proj-grid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
@@ -272,7 +276,7 @@
       padding:7px 10px;
       border-radius:999px;
     }
-    /* active by JS */
+
     .proj-grid[data-active="0"] .proj:nth-child(1),
     .proj-grid[data-active="1"] .proj:nth-child(2),
     .proj-grid[data-active="2"] .proj:nth-child(3){
@@ -302,17 +306,24 @@
     }
     @media (prefers-reduced-motion: reduce){
       html{ scroll-behavior:auto; }
-      .blob,.blob2{ transition:none; }
+      .bg-video{ transition:none; }
     }
   </style>
 </head>
 
 <body>
-  <!-- Background -->
-  <div class="bg" aria-hidden="true">
-    <div id="blob" class="blob"></div>
-    <div id="blob2" class="blob2"></div>
-    <div class="vignette"></div>
+  <!-- ✅ Background -->
+  <div class="bg-wrap" aria-hidden="true">
+    <div class="color-base"></div>
+
+    <!-- video only used for hero scene -->
+    <video id="bgVideo" class="bg-video" autoplay muted loop playsinline preload="auto" src="assets/skyline.mp4"></video>
+
+    <!-- connected shapes (colors) -->
+    <div id="spot" class="spot"></div>
+    <div id="spot2" class="spot2"></div>
+
+    <div class="overlay"></div>
     <div class="stars"></div>
   </div>
 
@@ -332,8 +343,8 @@
   </header>
 
   <main id="top">
-    <!-- HERO (no card) -->
-    <section id="hero" data-scene="0">
+    <!-- HERO: reference-like. Video is background. No card -->
+    <section id="hero" data-scene="0" data-video="on">
       <div class="container">
         <div class="hero-wrap">
           <p class="kicker">AI Engineer • NLP • CV • MLOps</p>
@@ -342,33 +353,17 @@
             I build applied AI products — from voice assistants & RAG pipelines to deep learning
             in NLP and Computer Vision. Based in Cairo, Egypt.
           </p>
-
           <div class="actions">
             <a class="btn primary" href="#projects">View Projects →</a>
             <a class="btn" href="Malak%20AI%20Engineer.pdf" target="_blank" rel="noopener">Download CV</a>
             <a class="btn" href="https://github.com/malak-hossam" target="_blank" rel="noopener">GitHub</a>
             <a class="btn" href="https://linkedin.com/in/malak-hossam" target="_blank" rel="noopener">LinkedIn</a>
           </div>
-
-          <div class="iconbar">
-            <a class="icon" href="mailto:malak.hossam.work@gmail.com" aria-label="Email" title="Email">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4V6Z" stroke="currentColor" stroke-width="2"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="2"/></svg>
-            </a>
-            <a class="icon" href="https://github.com/malak-hossam" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C6.5 2 2 6.6 2 12.3c0 4.5 2.9 8.3 6.9 9.6.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.4-1.1-1-1.4-1-1.4-.9-.6.1-.6.1-.6 1 .1 1.6 1.1 1.6 1.1.9 1.6 2.3 1.1 2.9.8.1-.7.3-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 .9-2.7-.1-.2-.4-1.3.1-2.6 0 0 .8-.3 2.7 1 .8-.2 1.7-.3 2.6-.3s1.8.1 2.6.3c1.9-1.3 2.7-1 2.7-1 .5 1.3.2 2.4.1 2.6.6.7.9 1.6.9 2.7 0 3.9-2.4 4.7-4.6 5 .3.3.6.9.6 1.9v2.8c0 .3.2.6.7.5 4-1.3 6.9-5.1 6.9-9.6C22 6.6 17.5 2 12 2Z" fill="currentColor" opacity=".9"/></svg>
-            </a>
-            <a class="icon" href="https://linkedin.com/in/malak-hossam" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9H3v12h3V9Zm-1.5-6A1.8 1.8 0 1 0 4.5 6 1.8 1.8 0 0 0 4.5 3ZM21 21h-3v-6.3c0-1.5 0-3.4-2.1-3.4s-2.4 1.6-2.4 3.3V21h-3V9h2.9v1.6h.1c.4-.8 1.5-1.7 3.1-1.7 3.3 0 3.9 2.2 3.9 5.1V21Z" fill="currentColor" opacity=".9"/></svg>
-            </a>
-            <a class="icon" href="https://kaggle.com/malakhossam1" target="_blank" rel="noopener" aria-label="Kaggle" title="Kaggle">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M7 4h3v8l5-8h3l-5.3 8.2L18 20h-3.2l-4.8-7.1V20H7V4Z" fill="currentColor" opacity=".9"/></svg>
-            </a>
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- ABOUT -->
+    <!-- NEXT: color shapes scene (circle in middle) -->
     <section id="about" data-scene="1">
       <div class="container">
         <div class="panel">
@@ -382,7 +377,6 @@
       </div>
     </section>
 
-    <!-- EXPERIENCE -->
     <section id="experience" data-scene="2">
       <div class="container">
         <div class="panel">
@@ -396,13 +390,12 @@
       </div>
     </section>
 
-    <!-- PROJECTS -->
     <section id="projects" data-scene="3">
       <div class="container">
         <div class="panel">
           <p class="kicker">Projects</p>
           <h2>Hover to highlight</h2>
-          <p class="lead">اللي تقفي عليه يبقى بارز… وتحسي إنه “جزء من نفس الحركة” في الخلفية.</p>
+          <p class="lead">اللي تقفي عليه يبقى بارز… والباقي يهدى.</p>
 
           <div class="proj-grid" id="projGrid" data-active="0">
             <div class="proj" tabindex="0">
@@ -421,11 +414,11 @@
               <div class="tags"><span class="tag">CV</span><span class="tag">ResNet</span></div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
 
-    <!-- SKILLS -->
     <section id="skills" data-scene="4">
       <div class="container">
         <div class="panel">
@@ -436,7 +429,6 @@
       </div>
     </section>
 
-    <!-- CONTACT -->
     <section id="contact" data-scene="5">
       <div class="container">
         <div class="panel">
@@ -463,10 +455,27 @@
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
-
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // ===== Projects hover/focus pop
+    // Nav active
+    const navLinks = Array.from(document.querySelectorAll(".links a"));
+    const watchSections = navLinks
+      .map(a => a.getAttribute("href"))
+      .filter(h => h && h.startsWith("#"))
+      .map(id => document.querySelector(id))
+      .filter(Boolean);
+
+    const navObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const id = "#" + e.target.id;
+        navLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === id));
+      });
+    }, { rootMargin: "-45% 0px -50% 0px", threshold: 0.01 });
+
+    watchSections.forEach(s => navObs.observe(s));
+
+    // Projects hover/focus pop
     const grid = document.getElementById("projGrid");
     if (grid){
       const items = Array.from(grid.querySelectorAll(".proj"));
@@ -477,34 +486,13 @@
       grid.dataset.active = "0";
     }
 
-    // ===== Morphing background scenes config
-    // كل Scene = دائرة/بلوب مختلف: مكان + حجم + ألوان
-    const scenes = [
-      // 0 Hero
-      { x: 55, y: 40, size: 860, blur: 0,
-        c1: "rgba(181,155,255,.22)", c2: "rgba(124,243,255,.14)", c3:"rgba(255,179,214,.10)" },
-      // 1 About (circle in center, more obvious)
-      { x: 50, y: 52, size: 980, blur: 0,
-        c1: "rgba(181,155,255,.26)", c2: "rgba(181,155,255,.08)", c3:"rgba(124,243,255,.10)" },
-      // 2 Experience (circle grows more and shifts)
-      { x: 65, y: 55, size: 1180, blur: 0,
-        c1: "rgba(124,243,255,.18)", c2: "rgba(181,155,255,.16)", c3:"rgba(255,179,214,.08)" },
-      // 3 Projects (bigger and centered-ish)
-      { x: 48, y: 58, size: 1320, blur: 0,
-        c1: "rgba(181,155,255,.22)", c2: "rgba(255,179,214,.14)", c3:"rgba(124,243,255,.10)" },
-      // 4 Skills
-      { x: 40, y: 50, size: 1180, blur: 0,
-        c1: "rgba(255,179,214,.14)", c2: "rgba(181,155,255,.16)", c3:"rgba(124,243,255,.10)" },
-      // 5 Contact
-      { x: 55, y: 45, size: 980, blur: 0,
-        c1: "rgba(124,243,255,.14)", c2: "rgba(181,155,255,.18)", c3:"rgba(255,179,214,.10)" },
-    ];
-
-    const blob  = document.getElementById("blob");
-    const blob2 = document.getElementById("blob2");
+    // ===== Connected shapes (circle grows between sections) + mouse parallax
+    const spot  = document.getElementById("spot");
+    const spot2 = document.getElementById("spot2");
+    const bgVideo = document.getElementById("bgVideo");
     const sections = Array.from(document.querySelectorAll("main section[data-scene]"));
 
-    // mouse parallax
+    // Mouse movement
     let mx = 0, my = 0;
     window.addEventListener("mousemove", (e) => {
       const w = window.innerWidth || 1;
@@ -512,6 +500,34 @@
       mx = (e.clientX / w - 0.5);
       my = (e.clientY / h - 0.5);
     }, { passive:true });
+
+    // Scene settings:
+    // الفكرة: سيكشن 1.. بعدها دائرة في النص تكبر تدريجيًا + تغيير بسيط في الألوان
+    const scenes = [
+      // 0 hero (still use spots but softer, + video on)
+      { x: 58, y: 45, size: 820,  size2: 520,
+        c1:"rgba(181,155,255,.16)", c2:"rgba(124,243,255,.10)", c3:"rgba(255,179,214,.08)", video:true },
+
+      // 1 about (circle واضح في النص)
+      { x: 50, y: 52, size: 980,  size2: 620,
+        c1:"rgba(181,155,255,.26)", c2:"rgba(181,155,255,.10)", c3:"rgba(124,243,255,.10)", video:false },
+
+      // 2 experience (circle يكبر)
+      { x: 58, y: 55, size: 1180, size2: 720,
+        c1:"rgba(124,243,255,.16)", c2:"rgba(181,155,255,.14)", c3:"rgba(255,179,214,.08)", video:false },
+
+      // 3 projects (أكبر ومركزي)
+      { x: 48, y: 58, size: 1360, size2: 820,
+        c1:"rgba(181,155,255,.20)", c2:"rgba(255,179,214,.14)", c3:"rgba(124,243,255,.10)", video:false },
+
+      // 4 skills
+      { x: 42, y: 50, size: 1240, size2: 760,
+        c1:"rgba(255,179,214,.12)", c2:"rgba(181,155,255,.14)", c3:"rgba(124,243,255,.10)", video:false },
+
+      // 5 contact
+      { x: 55, y: 45, size: 1040, size2: 660,
+        c1:"rgba(124,243,255,.14)", c2:"rgba(181,155,255,.16)", c3:"rgba(255,179,214,.10)", video:false },
+    ];
 
     function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
     function lerp(a,b,t){ return a + (b-a)*t; }
@@ -529,7 +545,7 @@
         if (d < bestDist){ bestDist = d; bestIdx = i; }
       });
 
-      // progress to next (last ~35% of current section)
+      // transition in last 35% for connected feel
       const curSec = sections.find(s => parseInt(s.dataset.scene,10) === bestIdx) || sections[0];
       const r = curSec.getBoundingClientRect();
       const start = r.height * 0.65;
@@ -539,79 +555,75 @@
       return { i: bestIdx, t };
     }
 
-    function applyBlob(el, s, mouseScale){
-      // blob gradient
+    function paintSpot(el, s, mouseScale){
+      // gradient glow
       el.style.background = `
-        radial-gradient(55% 55% at 35% 35%, ${s.c1}, transparent 60%),
-        radial-gradient(55% 55% at 70% 45%, ${s.c2}, transparent 62%),
-        radial-gradient(55% 55% at 45% 75%, ${s.c3}, transparent 65%)
+        radial-gradient(55% 55% at 35% 35%, ${s.c1}, transparent 62%),
+        radial-gradient(55% 55% at 70% 45%, ${s.c2}, transparent 64%),
+        radial-gradient(55% 55% at 45% 75%, ${s.c3}, transparent 66%)
       `;
 
-      // position + size + mouse parallax
       const px = s.x + mx * mouseScale;
       const py = s.y + my * mouseScale;
 
-      el.style.width  = s.size + "px";
-      el.style.height = s.size + "px";
       el.style.left = px + "%";
       el.style.top  = py + "%";
-      el.style.filter = `blur(${s.blur}px)`;
-      el.style.transform = "translate(-50%, -50%)";
     }
 
-    let ticking = false;
+    function update(){
+      if (reduceMotion) return;
+
+      const { i, t } = pickScene();
+      const s1 = scenes[i] || scenes[0];
+      const s2 = scenes[Math.min(i+1, scenes.length-1)] || s1;
+
+      const s = {
+        x: lerp(s1.x, s2.x, t),
+        y: lerp(s1.y, s2.y, t),
+        size: lerp(s1.size, s2.size, t),
+        size2: lerp(s1.size2, s2.size2, t),
+
+        // swap colors mid-way
+        c1: t < 0.5 ? s1.c1 : s2.c1,
+        c2: t < 0.5 ? s1.c2 : s2.c2,
+        c3: t < 0.5 ? s1.c3 : s2.c3,
+
+        // fade video out after hero
+        video: (t < 0.65 ? s1.video : s2.video),
+      };
+
+      // apply sizes
+      spot.style.width  = s.size + "px";
+      spot.style.height = s.size + "px";
+      spot2.style.width  = s.size2 + "px";
+      spot2.style.height = s.size2 + "px";
+
+      // mouse reactive
+      paintSpot(spot,  s, 10);
+      paintSpot(spot2, s, 16);
+
+      // video only for hero scene (smooth fade)
+      bgVideo.style.opacity = s.video ? "1" : "0";
+    }
+
+    let ticking=false;
     function onScroll(){
       if (reduceMotion) return;
       if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const { i, t } = pickScene();
-        const s1 = scenes[i] || scenes[0];
-        const s2 = scenes[Math.min(i+1, scenes.length-1)] || s1;
-
-        // interpolate between s1 and s2
-        const s = {
-          x: lerp(s1.x, s2.x, t),
-          y: lerp(s1.y, s2.y, t),
-          size: lerp(s1.size, s2.size, t),
-          blur: lerp(s1.blur, s2.blur, t),
-          c1: t < 0.5 ? s1.c1 : s2.c1,
-          c2: t < 0.5 ? s1.c2 : s2.c2,
-          c3: t < 0.5 ? s1.c3 : s2.c3,
-        };
-
-        // main blob + secondary blob (depth)
-        applyBlob(blob, s, 7.5);
-
-        const sBack = {
-          ...s,
-          size: s.size * 0.68,
-        };
-        applyBlob(blob2, sBack, 12);
-
-        ticking = false;
-      });
+      ticking=true;
+      requestAnimationFrame(()=>{ update(); ticking=false; });
     }
 
-    // also animate with mouse even without scroll (light)
-    function tickMouse(){
-      if (reduceMotion) return;
-      onScroll(); // reuse interpolation result
-      requestAnimationFrame(tickMouse);
+    // continuous mouse animation (very light)
+    function raf(){
+      if (!reduceMotion) update();
+      requestAnimationFrame(raf);
     }
 
-    onScroll();
-    tickMouse();
+    update();
+    raf();
     window.addEventListener("scroll", onScroll, { passive:true });
     window.addEventListener("resize", onScroll);
-
-    // If reduced motion: set a static scene
-    if (reduceMotion){
-      applyBlob(blob, scenes[0], 0);
-      applyBlob(blob2, { ...scenes[0], size: scenes[0].size * 0.68 }, 0);
-      blob.style.opacity = "1";
-      blob2.style.opacity = "0.85";
-    }
   </script>
 </body>
 </html>
