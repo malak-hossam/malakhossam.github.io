@@ -332,41 +332,6 @@ main { position:relative; z-index:10; }
 }
 @keyframes scl{0%,100%{transform:scaleY(1);opacity:.4}50%{transform:scaleY(1.2);opacity:1}}
 
-/* ══════════════════════════════════════════
-   ── HERO NAME GHOST  (the "bear" effect)
-   The name is rendered twice:
-   1. Normal in-flow (fades out as user scrolls)
-   2. A fixed clone that stays pinned above everything,
-      opacity driven by JS based on scroll position.
-      It disappears once the first panel slides over it.
-══════════════════════════════════════════ */
-#hero-name-fixed {
-  position: fixed;
-  top: 50%;
-  left: clamp(28px,6.5vw,100px);
-  transform: translateY(-50%);
-  z-index: 8; /* above cosmos, below panels */
-  pointer-events: none;
-  font-size: clamp(48px,7.5vw,96px);
-  font-weight: 700;
-  line-height: .95;
-  letter-spacing: -.04em;
-  font-family: 'DM Sans', sans-serif;
-  opacity: 0;
-  will-change: opacity, transform;
-  /* subtle scale-down as it "recedes" */
-  transition: none;
-}
-#hero-name-fixed .display-word {
-  display: block;
-  font-family: 'Syne', sans-serif; font-weight: 800;
-  font-size: clamp(48px,7.5vw,96px);
-  background: linear-gradient(115deg,var(--v) 0%,var(--sk) 42%,var(--li) 72%,var(--pk) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text; background-size: 200%;
-  animation: gs 7s ease-in-out infinite alternate;
-}
-
 /* ── KRAI PARALLAX PIN  ─────────────────
    The hero illustration (video+bg) stays
    fixed. As you scroll, a dark "curtain" from
@@ -374,17 +339,22 @@ main { position:relative; z-index:10; }
    like the bear effect in Krai.
 ══════════════════════════════════════════ */
 
-/* Each section after the hero acts as a
-   "panel" sliding over the pinned background.
-   Background is transparent so stars/cosmos show through */
+/* Each section after the hero acts as a "panel" sliding over the pinned background.
+   Background is semi-dark so stars show through but panels feel distinct. */
 .panel {
-  position:relative; z-index:12;
-  background: transparent;
-  border-top:1px solid rgba(255,255,255,.06);
-  box-shadow:0 -20px 50px rgba(0,0,0,.40);
+  position: relative;
+  z-index: 20;  /* well above hero (z-index:11) so they slide over it */
+  background: rgba(6,4,20,.72);
+  backdrop-filter: blur(0px);
+  border-top: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 -32px 64px rgba(0,0,0,.60);
 }
-/* Hero needs no panel treatment */
-#about { z-index:11; background:transparent; }
+/* Hero sits lower so panels slide over it */
+#about {
+  z-index: 11;
+  background: transparent;
+  /* The hero name/content stays painted here — panels slide over them */
+}
 
 /* ══════════════════════════════════════════
    ── EXPERIENCE  ────────────────────────
@@ -603,66 +573,124 @@ main { position:relative; z-index:10; }
 .ts-strip { width:100%; }
 
 /* ══════════════════════════════════════════
-   ── SKILLS  ────────────────────────────
-══════════════════════════════════════════ */
-#skills .sec-inner { width:100%; max-width:1080px; margin:0 auto; }
-
-.sk-grid {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
-}
-.sk-card {
-  padding:20px 22px;
-}
-.sk-t {
-  font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--dim); margin-bottom:10px;
-}
-
-/* ══════════════════════════════════════════
-   ── TEACHING  ──────────────────────────
+   ── TEACHING  — vertical timeline  ──────
 ══════════════════════════════════════════ */
 #teaching .sec-inner { width:100%; max-width:1080px; margin:0 auto; }
-.tg { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.act { padding:22px 24px; }
-.act-h { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
-.act-ti {
-  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
-  letter-spacing:-.01em; line-height:1.25; margin-bottom:3px;
+
+.teach-timeline { display:flex; flex-direction:column; gap:0; margin-top:8px; }
+
+.tl-item {
+  display:grid;
+  grid-template-columns:56px 1fr;
+  gap:0 20px;
+  position:relative;
 }
-.act-org { font-size:12px; color:var(--dim); }
-.dpill { font-size:10.5px; padding:5px 11px; border-radius:999px; border:1px solid rgba(255,255,255,.09); color:var(--dim); background:rgba(255,255,255,.04); white-space:nowrap; }
-.act-l { list-style:none; font-size:13.5px; color:var(--mut); line-height:1.65; display:flex; flex-direction:column; gap:7px; }
-.act-l li { display:flex; gap:9px; }
-.act-l li::before { content:'▸'; color:var(--li); opacity:.65; flex-shrink:0; }
+
+.tl-left {
+  display:flex; flex-direction:column; align-items:center;
+}
+.tl-icon {
+  width:44px; height:44px; border-radius:50%;
+  background:rgba(124,91,255,.15); border:1px solid rgba(124,91,255,.30);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0; z-index:1;
+  transition:background .28s,border-color .28s;
+}
+.tl-item:hover .tl-icon {
+  background:rgba(124,91,255,.28); border-color:rgba(124,91,255,.55);
+}
+.tl-spine {
+  width:1px; flex:1; min-height:28px;
+  background:linear-gradient(180deg,rgba(124,91,255,.30),transparent);
+  margin-top:6px;
+}
+
+.tl-body { padding:0 0 40px 0; }
+
+.tl-meta {
+  display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;
+}
+.tl-date {
+  font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--dim); font-weight:500;
+}
+.tl-tag {
+  font-size:11px; padding:3px 9px; border-radius:999px;
+  border:1px solid rgba(124,91,255,.24); background:rgba(124,91,255,.08);
+  color:var(--li);
+}
+.tl-title {
+  font-family:'DM Sans',sans-serif; font-size:18px; font-weight:600;
+  letter-spacing:-.02em; line-height:1.25; margin-bottom:9px;
+}
+.tl-desc {
+  font-size:14px; color:var(--mut); line-height:1.72;
+  max-width:64ch; margin-bottom:12px; font-weight:300;
+}
 
 /* ══════════════════════════════════════════
-   ── CONTACT  ───────────────────────────
+   ── CONTACT  — bold hero layout  ────────
 ══════════════════════════════════════════ */
-#contact { min-height:80vh; }
-#contact .sec-inner { width:100%; max-width:1080px; margin:0 auto; }
-.ct-wrap { display:grid; grid-template-columns:1fr 1.35fr; gap:18px; align-items:start; margin-top:30px; }
-.ct-panel {
-  border-radius:calc(var(--r) + 4px);
-  border:1px solid rgba(124,91,255,.22);
-  background:radial-gradient(600px 320px at 30% 30%,rgba(124,91,255,.14),transparent 60%),rgba(255,255,255,.035);
-  padding:30px; backdrop-filter:blur(12px);
+#contact .sec-inner {
+  width:100%; max-width:1080px; margin:0 auto;
 }
-.ct-ti {
-  font-family:'DM Sans',sans-serif; font-size:clamp(18px,2.3vw,27px);
-  font-weight:700; letter-spacing:-.03em; line-height:1.2; margin-bottom:10px;
+
+.ct-hero {
+  padding-bottom:48px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  margin-bottom:36px;
 }
-.ct-panel p { font-size:14px; color:var(--mut); line-height:1.78; margin-bottom:22px; font-weight:300; max-width:44ch; }
-.ct-items { display:flex; flex-direction:column; gap:9px; }
-.ci {
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding:14px 18px; border-radius:var(--r);
-  border:1px solid var(--cbdr); background:var(--cbg);
-  backdrop-filter:blur(8px); transition:all .2s;
+.ct-overline {
+  font-size:11px; letter-spacing:.26em; text-transform:uppercase;
+  color:var(--v); font-weight:600; margin-bottom:14px;
+  display:flex; align-items:center; gap:10px;
 }
-.ci:hover { border-color:rgba(124,243,255,.26); transform:translateX(5px); background:rgba(124,243,255,.04); }
-.ci-k { font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); margin-bottom:3px; }
-.ci-v { font-size:14px; color:rgba(255,255,255,.84); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:36ch; }
-.badge { font-size:11px; padding:4px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.08); color:var(--dim); background:rgba(255,255,255,.04); flex-shrink:0; }
+.ct-overline::before {
+  content:''; display:inline-block;
+  width:28px; height:1px; background:var(--v);
+}
+.ct-big {
+  font-family:'DM Sans',sans-serif;
+  font-size:clamp(28px,4.5vw,58px);
+  font-weight:700; letter-spacing:-.04em; line-height:1.05;
+  margin-bottom:18px;
+}
+.ct-tagline {
+  font-size:16px; color:var(--mut); line-height:1.72;
+  max-width:60ch; font-weight:300;
+}
+
+.ct-links {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+.ct-lnk {
+  display:flex; align-items:center; gap:14px;
+  padding:18px 20px; border-radius:var(--r);
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  backdrop-filter:blur(10px);
+  transition:all .24s; cursor:none;
+}
+.ct-lnk:hover {
+  border-color:rgba(124,91,255,.36);
+  background:rgba(124,91,255,.08);
+  transform:translateY(-3px);
+  box-shadow:0 16px 40px rgba(0,0,0,.35),0 0 0 1px rgba(124,91,255,.16);
+}
+.ct-lnk-ico {
+  font-size:20px; width:42px; height:42px;
+  border-radius:50%;
+  background:rgba(255,255,255,.05);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.ct-lnk-text { flex:1; min-width:0; }
+.ct-lnk-k { display:block; font-size:10px; letter-spacing:.20em; text-transform:uppercase; color:var(--dim); margin-bottom:3px; }
+.ct-lnk-v { display:block; font-size:13.5px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ct-lnk-arr { font-size:16px; color:var(--dim); flex-shrink:0; transition:color .2s,transform .2s; }
+.ct-lnk:hover .ct-lnk-arr { color:var(--li); transform:translateX(3px); }
 
 /* ══════════════════════════════════════════
    FOOTER
@@ -691,10 +719,7 @@ footer {
   .krow { flex-direction:column; align-items:stretch; min-height:unset; }
   .kcard { height:auto; min-height:240px; flex:none; }
   .kcard:hover,.kcard.kactive { transform:none; height:auto; }
-  .kcard-blob { width:80px; height:80px; font-size:30px; }
-  .sk-grid { grid-template-columns:1fr; }
-  .tg { grid-template-columns:1fr; }
-  .ct-wrap { grid-template-columns:1fr; }
+  .ct-links { grid-template-columns:1fr; }
   .karr-l,.karr-r { display:none; }
   .nl a { padding:7px 9px; font-size:12px; }
 }
@@ -716,11 +741,6 @@ footer {
 </video>
 <div id="hov"></div>
 
-<!-- HERO NAME GHOST (stays fixed while scrolling, like the Krai bear) -->
-<div id="hero-name-fixed" aria-hidden="true">
-  Malak<br><span class="display-word">Imbaby</span>
-</div>
-
 <!-- CURSOR -->
 <div id="cdot" class="cdot"></div>
 <div id="cring" class="cring"></div>
@@ -730,9 +750,8 @@ footer {
   <a class="brand" href="#about"><span class="bpulse"></span>Malak Imbaby</a>
   <ul class="nl" id="nl">
     <li><a href="#about">About</a></li>
-    <li><a href="#experience">Experience</a></li>
     <li><a href="#projects">Projects</a></li>
-    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
     <li><a href="#teaching">Teaching</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -756,57 +775,6 @@ footer {
       </div>
     </div>
     <div class="scroll-cue"><div class="sc-ln"></div><span>Scroll</span></div>
-  </section>
-
-  <!-- ══ EXPERIENCE ═════════════════════════════ -->
-  <section class="sec panel" id="experience">
-    <div class="sec-inner">
-      <div class="exp-side">
-        <div class="lbl up"><div class="lbl-bar"></div><span>Experience</span></div>
-        <div class="exp-num up d1">3</div>
-        <div class="exp-num-lbl up d2">Roles shipped</div>
-        <p class="up d3" style="font-size:14px;color:var(--mut);line-height:1.70;font-weight:300;max-width:32ch;margin-bottom:18px">Production work across LLM systems, RAG pipelines, microservices, and MLOps.</p>
-        <div class="chips up d4">
-          <span class="chip">Realtime API</span><span class="chip">RAG</span>
-          <span class="chip">MLOps</span><span class="chip">Docker</span>
-        </div>
-      </div>
-
-      <div class="exp-stack">
-        <article class="card exp-card up d2">
-          <p class="exp-role">AI Engineer — Contract</p>
-          <p class="exp-co">Prime Softworks · Oct – Dec 2025 · Cairo, Egypt</p>
-          <ul class="exp-buls">
-            <li>Built a multimodal text/voice AI Voice Assistant using GPT Realtime.</li>
-            <li>Implemented Supabase vector embeddings RAG memory for persistent context.</li>
-            <li>FastAPI microservices + Docker optimised for low-latency streaming.</li>
-          </ul>
-          <div class="chips"><span class="chip">Realtime</span><span class="chip">RAG</span><span class="chip">Supabase</span><span class="chip">FastAPI</span><span class="chip">Docker</span></div>
-        </article>
-
-        <article class="card exp-card up d3">
-          <p class="exp-role">AI / ML Intern</p>
-          <p class="exp-co">Instant Academy · Apr – May 2025 · Cairo, Egypt</p>
-          <ul class="exp-buls">
-            <li>Built NLP + CV systems (CNN / ResNet) and chat-with-PDF pipelines.</li>
-            <li>Improved sentiment model accuracy by <strong>+12%</strong> via tuning &amp; preprocessing.</li>
-            <li>Worked end-to-end: data collection → training → evaluation.</li>
-          </ul>
-          <div class="chips"><span class="chip">NLP</span><span class="chip">ResNet</span><span class="chip">Chat-PDF</span><span class="chip">Fine-tuning</span></div>
-        </article>
-
-        <article class="card exp-card up d4">
-          <p class="exp-role">AI Level 3 Intern</p>
-          <p class="exp-co">Orange Digital Center (ODC) · Jan – Feb 2025 · Remote</p>
-          <ul class="exp-buls">
-            <li>Completed 96-hour advanced AI/MLOps training — Final Grade: 94.</li>
-            <li>Built RNNs, CNNs, GANs, VAEs and deployed ML systems via Docker.</li>
-            <li>Practiced production deployment patterns and CI/CD pipelines.</li>
-          </ul>
-          <div class="chips"><span class="chip">MLOps</span><span class="chip">Docker</span><span class="chip">Deep Learning</span><span class="chip">CI/CD</span></div>
-        </article>
-      </div>
-    </div>
   </section>
 
   <!-- ══ PROJECTS ════════════════════════════════ -->
@@ -958,102 +926,148 @@ footer {
     </div>
   </section>
 
-  <!-- ══ SKILLS ══════════════════════════════════ -->
-  <section class="sec panel" id="skills">
+  <!-- ══ EXPERIENCE ═════════════════════════════ -->
+  <section class="sec panel" id="experience">
     <div class="sec-inner">
-      <div class="lbl up"><div class="lbl-bar"></div><span>Skills</span></div>
-      <h2 class="sec-title up d1">How I ship<br>production-ready AI</h2>
-      <p class="sec-lead up d2">Tight fundamentals first, then optimise: data, models, inference, deployment.</p>
+      <div class="exp-side">
+        <div class="lbl up"><div class="lbl-bar"></div><span>Experience</span></div>
+        <div class="exp-num up d1">3</div>
+        <div class="exp-num-lbl up d2">Roles shipped</div>
+        <p class="up d3" style="font-size:14px;color:var(--mut);line-height:1.70;font-weight:300;max-width:32ch;margin-bottom:18px">Production work across LLM systems, RAG pipelines, microservices, and MLOps.</p>
+        <div class="chips up d4">
+          <span class="chip">Realtime API</span><span class="chip">RAG</span>
+          <span class="chip">MLOps</span><span class="chip">Docker</span>
+        </div>
+      </div>
 
-      <div class="sk-grid">
-        <div class="card sk-card up d2">
-          <p class="sk-t">Programming Languages</p>
-          <div class="chips"><span class="chip">Python — Advanced</span><span class="chip">C++</span><span class="chip">Java</span></div>
-        </div>
-        <div class="card sk-card up d3">
-          <p class="sk-t">Deep Learning</p>
-          <div class="chips"><span class="chip">PyTorch</span><span class="chip">TensorFlow</span><span class="chip">Keras</span><span class="chip">CNN</span><span class="chip">RNN / LSTM</span><span class="chip">Transformers</span><span class="chip">GAN</span><span class="chip">VAE</span></div>
-        </div>
-        <div class="card sk-card up d4">
-          <p class="sk-t">LLM Systems</p>
-          <div class="chips"><span class="chip">LangChain</span><span class="chip">RAG</span><span class="chip">Vector DBs</span><span class="chip">Supabase</span><span class="chip">Prompt Engineering</span><span class="chip">VLMs</span><span class="chip">CrewAI</span></div>
-        </div>
-        <div class="card sk-card up d5">
-          <p class="sk-t">MLOps &amp; Deployment</p>
-          <div class="chips"><span class="chip">Docker</span><span class="chip">FastAPI</span><span class="chip">REST</span><span class="chip">CI/CD</span><span class="chip">vLLM</span><span class="chip">GPU inference</span><span class="chip">Git</span><span class="chip">Linux</span><span class="chip">OpenCV</span><span class="chip">SQLite</span></div>
-        </div>
+      <div class="exp-stack">
+        <article class="card exp-card up d2">
+          <p class="exp-role">AI Engineer — Contract</p>
+          <p class="exp-co">Prime Softworks · Oct – Dec 2025 · Cairo, Egypt</p>
+          <ul class="exp-buls">
+            <li>Built a multimodal text/voice AI Voice Assistant using GPT Realtime.</li>
+            <li>Implemented Supabase vector embeddings RAG memory for persistent context.</li>
+            <li>FastAPI microservices + Docker optimised for low-latency streaming.</li>
+          </ul>
+          <div class="chips"><span class="chip">Realtime</span><span class="chip">RAG</span><span class="chip">Supabase</span><span class="chip">FastAPI</span><span class="chip">Docker</span></div>
+        </article>
+
+        <article class="card exp-card up d3">
+          <p class="exp-role">AI / ML Intern</p>
+          <p class="exp-co">Instant Academy · Apr – May 2025 · Cairo, Egypt</p>
+          <ul class="exp-buls">
+            <li>Built NLP + CV systems (CNN / ResNet) and chat-with-PDF pipelines.</li>
+            <li>Improved sentiment model accuracy by <strong>+12%</strong> via tuning &amp; preprocessing.</li>
+            <li>Worked end-to-end: data collection → training → evaluation.</li>
+          </ul>
+          <div class="chips"><span class="chip">NLP</span><span class="chip">ResNet</span><span class="chip">Chat-PDF</span><span class="chip">Fine-tuning</span></div>
+        </article>
+
+        <article class="card exp-card up d4">
+          <p class="exp-role">AI Level 3 Intern</p>
+          <p class="exp-co">Orange Digital Center (ODC) · Jan – Feb 2025 · Remote</p>
+          <ul class="exp-buls">
+            <li>Completed 96-hour advanced AI/MLOps training — Final Grade: 94.</li>
+            <li>Built RNNs, CNNs, GANs, VAEs and deployed ML systems via Docker.</li>
+            <li>Practiced production deployment patterns and CI/CD pipelines.</li>
+          </ul>
+          <div class="chips"><span class="chip">MLOps</span><span class="chip">Docker</span><span class="chip">Deep Learning</span><span class="chip">CI/CD</span></div>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- ══ TEACHING ════════════════════════════════ -->
+  <!-- ══ TEACHING — timeline layout ═════════════ -->
   <section class="sec panel" id="teaching">
     <div class="sec-inner">
       <div class="lbl up"><div class="lbl-bar"></div><span>Teaching &amp; Academic</span></div>
-      <h2 class="sec-title up d1">Helping others<br>learn AI — properly</h2>
-      <p class="sec-lead up d2">Mentoring and team work that sharpened my communication and fundamentals under pressure.</p>
+      <h2 class="sec-title up d1">Beyond the code —<br>teaching &amp; building teams</h2>
 
-      <div class="tg">
-        <article class="card act up d2">
-          <div class="act-h">
-            <div><p class="act-ti">AI Mentor</p><p class="act-org">IEEE Student Activity</p></div>
-            <span class="dpill">Jan – May 2025</span>
-          </div>
-          <ul class="act-l">
-            <li>Mentored Python + ML fundamentals for undergraduates.</li>
-            <li>Explained supervised learning, evaluation, and NN basics.</li>
-            <li>Debugged assignments and guided final academic projects.</li>
-          </ul>
-        </article>
+      <div class="teach-timeline">
 
-        <article class="card act up d3">
-          <div class="act-h">
-            <div><p class="act-ti">Image Processing Member</p><p class="act-org">Sailfish ROV Team</p></div>
-            <span class="dpill">2022 – 2023</span>
+        <!-- Item 1 -->
+        <div class="tl-item up d2">
+          <div class="tl-left">
+            <div class="tl-icon">🎓</div>
+            <div class="tl-spine"></div>
           </div>
-          <ul class="act-l">
-            <li>Built OpenCV pipelines for underwater object detection.</li>
-            <li>Improved autonomous navigation via real-time CV optimisation.</li>
-          </ul>
-        </article>
+          <div class="tl-body">
+            <div class="tl-meta">
+              <span class="tl-date">Jan – May 2025</span>
+              <span class="tl-tag">IEEE Student Activity</span>
+            </div>
+            <h3 class="tl-title">AI Mentor</h3>
+            <p class="tl-desc">Mentored undergraduates through Python, ML fundamentals, supervised learning, evaluation, and neural network basics. Helped debug assignments and guided students through their final academic projects — making sure they understood the <em>why</em>, not just the <em>what</em>.</p>
+            <div class="chips"><span class="chip">Python</span><span class="chip">ML Fundamentals</span><span class="chip">Teaching</span></div>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="tl-item up d3">
+          <div class="tl-left">
+            <div class="tl-icon">🤿</div>
+          </div>
+          <div class="tl-body">
+            <div class="tl-meta">
+              <span class="tl-date">2022 – 2023</span>
+              <span class="tl-tag">Sailfish ROV Team</span>
+            </div>
+            <h3 class="tl-title">Image Processing Member</h3>
+            <p class="tl-desc">Built OpenCV computer vision pipelines for real-time underwater object detection. Improved autonomous navigation accuracy and contributed to competitive ROV performance under extreme time pressure.</p>
+            <div class="chips"><span class="chip">OpenCV</span><span class="chip">CV Pipelines</span><span class="chip">Robotics</span></div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- ══ CONTACT ═════════════════════════════════ -->
-  <section class="sec panel" id="contact">
+  <!-- ══ CONTACT — bold full-width layout ════════ -->
+  <section class="sec panel" id="contact" style="min-height:auto;padding-bottom:100px">
     <div class="sec-inner">
-      <div class="lbl up"><div class="lbl-bar"></div><span>Contact</span></div>
-      <h2 class="sec-title up d1">Let's build<br>something reliable.</h2>
+      <div class="ct-hero up">
+        <p class="ct-overline">Let's work together</p>
+        <h2 class="ct-big">Open to AI engineering<br>roles &amp; freelance projects.</h2>
+        <p class="ct-tagline">If you need AI that behaves consistently in production — not just in a demo — I'm ready to talk.</p>
+        <div class="btns" style="margin-top:28px">
+          <a class="btn btn-p" href="mailto:malak.hossam.work@gmail.com" style="font-size:15px;padding:13px 28px">Email me →</a>
+          <a class="btn" href="Malak AI Engineer.pdf" target="_blank" rel="noopener">Open CV</a>
+        </div>
+      </div>
 
-      <div class="ct-wrap">
-        <div class="ct-panel up d2">
-          <p class="ct-ti">Open to AI engineering roles &amp; freelance projects.</p>
-          <p>If you need AI that behaves consistently in production — not just a demo — I'm happy to talk.</p>
-          <div class="btns">
-            <a class="btn btn-p" href="/cdn-cgi/l/email-protection#5835393439337630372b2b3935762f372a33183f35393134763b3735">Email me →</a>
-            <a class="btn" href="Malak AI Engineer.pdf" target="_blank" rel="noopener">Open CV</a>
+      <div class="ct-links up d2">
+        <a class="ct-lnk" href="mailto:malak.hossam.work@gmail.com">
+          <span class="ct-lnk-ico">✉</span>
+          <div class="ct-lnk-text">
+            <span class="ct-lnk-k">Email</span>
+            <span class="ct-lnk-v">malak.hossam.work@gmail.com</span>
           </div>
-        </div>
-
-        <div class="ct-items up d3">
-          <a class="ci" href="/cdn-cgi/l/email-protection#dcb1bdb0bdb7f2b4b3afafbdb1f2abb3aeb79cbbb1bdb5b0f2bfb3b1">
-            <div><p class="ci-k">Email</p><p class="ci-v"><span class="__cf_email__" data-cfemail="82efe3eee3e9aceaedf1f1e3efacf5edf0e9c2e5efe3ebeeace1edef">[email&#160;protected]</span></p></div>
-            <span class="badge">Primary</span>
-          </a>
-          <a class="ci" href="tel:+201204073624">
-            <div><p class="ci-k">Phone</p><p class="ci-v">+20 1204073624</p></div>
-            <span class="badge">Call</span>
-          </a>
-          <a class="ci" href="https://github.com/malak-hossam" target="_blank" rel="noopener">
-            <div><p class="ci-k">GitHub</p><p class="ci-v">github.com/malak-hossam</p></div>
-            <span class="badge">Repos</span>
-          </a>
-          <a class="ci" href="https://linkedin.com/in/malak-hossam" target="_blank" rel="noopener">
-            <div><p class="ci-k">LinkedIn</p><p class="ci-v">linkedin.com/in/malak-hossam</p></div>
-            <span class="badge">Connect</span>
-          </a>
-        </div>
+          <span class="ct-lnk-arr">→</span>
+        </a>
+        <a class="ct-lnk" href="tel:+201204073624">
+          <span class="ct-lnk-ico">📞</span>
+          <div class="ct-lnk-text">
+            <span class="ct-lnk-k">Phone</span>
+            <span class="ct-lnk-v">+20 1204073624</span>
+          </div>
+          <span class="ct-lnk-arr">→</span>
+        </a>
+        <a class="ct-lnk" href="https://github.com/malak-hossam" target="_blank" rel="noopener">
+          <span class="ct-lnk-ico">⌥</span>
+          <div class="ct-lnk-text">
+            <span class="ct-lnk-k">GitHub</span>
+            <span class="ct-lnk-v">github.com/malak-hossam</span>
+          </div>
+          <span class="ct-lnk-arr">→</span>
+        </a>
+        <a class="ct-lnk" href="https://linkedin.com/in/malak-hossam" target="_blank" rel="noopener">
+          <span class="ct-lnk-ico">◈</span>
+          <div class="ct-lnk-text">
+            <span class="ct-lnk-k">LinkedIn</span>
+            <span class="ct-lnk-v">linkedin.com/in/malak-hossam</span>
+          </div>
+          <span class="ct-lnk-arr">→</span>
+        </a>
       </div>
     </div>
   </section>
@@ -1109,55 +1123,8 @@ const vid  = document.getElementById('hvid');
 const vov  = document.getElementById('hov');
 const hero = document.getElementById('about');
 
-/* ── Hero name ghost ("bear" effect) ────────
-   - While hero is fully visible: ghost opacity = 0 (in-flow name shows)
-   - As user scrolls past hero: ghost fades IN and stays fixed
-   - When experience panel reaches top of viewport: ghost fades OUT
-   The ghost is at z-index 8, panels are at z-index 12,
-   so the panel slides over the name just like the bear in Krai.
-─────────────────────────────────────────── */
-const nameGhost = document.getElementById('hero-name-fixed');
-
 function syncHeroGhost() {
-  const sy = window.scrollY;
-  const heroH = hero.offsetHeight;
-  const expTop = document.getElementById('experience').getBoundingClientRect().top + sy;
-
-  // Phase 1: scrolling within hero (0 → heroH*0.3)
-  // in-flow name visible, ghost hidden
-  const fadeInStart = heroH * 0.18;
-  const fadeInEnd   = heroH * 0.55;
-
-  // Phase 2: ghost stays visible until experience panel covers it
-  const fadeOutStart = expTop - window.innerHeight * 0.85;
-  const fadeOutEnd   = expTop - window.innerHeight * 0.25;
-
-  let opacity = 0;
-  let scale   = 1;
-
-  if (sy < fadeInStart) {
-    opacity = 0;
-  } else if (sy < fadeInEnd) {
-    // fade in + very subtle grow
-    const t = (sy - fadeInStart) / (fadeInEnd - fadeInStart);
-    opacity = t;
-    scale   = 0.96 + t * 0.04;
-  } else if (sy < fadeOutStart) {
-    opacity = 1;
-    scale   = 1;
-  } else if (sy < fadeOutEnd) {
-    // fade out as panel slides over
-    const t = (sy - fadeOutStart) / (fadeOutEnd - fadeOutStart);
-    opacity = 1 - t;
-    scale   = 1 - t * 0.06;
-  } else {
-    opacity = 0;
-  }
-
-  nameGhost.style.opacity = opacity;
-  nameGhost.style.transform = `translateY(-50%) scale(${scale.toFixed(4)})`;
-
-  // Sync video: show while hero is in view
+  // Video: show only while hero section overlaps viewport
   const heroRect = hero.getBoundingClientRect();
   const vidOn = heroRect.bottom > 80;
   vid.classList.toggle('on', vidOn);
@@ -1166,12 +1133,15 @@ function syncHeroGhost() {
 syncHeroGhost();
 
 function doParallax() {
-  // subtle upward drift of in-flow hero content
+  // Hero content drifts up slower than scroll — "stays behind" as panels slide over
   if (!noMot && !isMob) {
     const sy = window.scrollY;
-    hero.querySelectorAll('.up.in').forEach(el => {
-      el.style.transform = `translateY(${sy * -0.22}px)`;
-    });
+    const heroH = hero.offsetHeight;
+    if (sy < heroH * 1.2) {
+      hero.querySelectorAll('.up.in').forEach(el => {
+        el.style.transform = `translateY(${sy * -0.18}px)`;
+      });
+    }
   }
 }
 
