@@ -856,7 +856,8 @@ if(!isMob&&!noMot){
       const width  = t * (hovering ? 9 : 6);
 
       ctx.beginPath();
-      ctx.moveTo(trail[prev].x, trail[trail[idx].x, trail[idx].y);
+      ctx.moveTo(trail[prev].x, trail[prev].y);
+      ctx.lineTo(trail[idx].x, trail[idx].y);
       ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
       ctx.lineWidth   = width;
       ctx.lineCap     = 'round';
@@ -1027,7 +1028,7 @@ if(!isMob&&!noMot){
       const py = orb.baseY + currentY * orb.depth * 35;
 
       const grad = ctx.createRadialGradient(px, py, 0, px, py, orb.r);
-      grad.addColorStop(0, orb.color + orb.alpha);
+      grad.addColorStop(0, orb.color + orb.alpha + ')');
       grad.addColorStop(1, orb.color + '0)');
       ctx.fillStyle = grad;
       ctx.beginPath();
