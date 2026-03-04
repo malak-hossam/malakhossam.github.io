@@ -82,7 +82,6 @@ nav.solid{background:rgba(6,4,20,.92);border-bottom-color:rgba(255,255,255,.08)}
   transform:translate(-50%,-50%);
   will-change:transform}
 /* Trailing comet tail — canvas behind dot */
-#cur-canvas{position:fixed;inset:0;z-index:9995;pointer-events:none}
 
 /* ══ PANELS — transparent so Vanta birds bleed through ══ */
 main{position:relative;z-index:20}
@@ -243,7 +242,7 @@ footer{position:relative;z-index:22;padding:26px clamp(28px,6.5vw,100px);border-
 #contact .sec-inner{position:relative;z-index:1}
 
 @media(max-width:960px){
-  body{cursor:auto}#cur-halo,#cur-dot,#cur-canvas{display:none}
+  body{cursor:auto}#cur-halo,#cur-dot{display:none}
   #hero-fixed{position:relative;min-height:100vh;z-index:5;align-items:center}
   #hero-spacer{display:none}.panel{z-index:10}
   .sec{padding:calc(var(--nh)+44px) 22px 60px}
@@ -269,7 +268,6 @@ footer{position:relative;z-index:22;padding:26px clamp(28px,6.5vw,100px);border-
 <div id="hov"></div>
 
 <!-- MAGNETIC CURSOR -->
-<canvas id="cur-canvas"></canvas>
 <div id="cur-halo"></div>
 <div id="cur-dot"></div>
 
@@ -496,7 +494,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 const isMob = window.matchMedia('(max-width:960px)').matches;
 const noMot = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-/* ══ GRADIENT MESH — slow aurora blobs ══ */
+/* ══ ANTIGRAVITY PARTICLES — tiny dashes, mouse repulsion ══ */
 (function(){
   const canvas = document.getElementById('mesh-c');
   const ctx = canvas.getContext('2d');
@@ -509,61 +507,90 @@ const noMot = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   resize();
   window.addEventListener('resize', resize);
 
-  // Each orb: position, size, speed, color
-  const orbs = [
-    { x:.18, y:.22, r:.55, vx:.00018, vy:.00012, color:[100, 60,255], a:.38 },
-    { x:.75, y:.15, r:.50, vx:-.00014, vy:.00017, color:[ 93,228,199], a:.28 },
-    { x:.50, y:.70, r:.60, vx:.00011, vy:-.00015, color:[181,155,255], a:.32 },
-    { x:.20, y:.80, r:.42, vx:.00020, vy:.00010, color:[124, 91,255], a:.25 },
-    { x:.85, y:.65, r:.48, vx:-.00016, vy:-.00012, color:[124,243,255], a:.22 },
-    { x:.55, y:.38, r:.38, vx:.00013, vy:.00018, color:[255,157,226], a:.18 },
+  // Particle colors — site palette, muted
+  const COLORS = [
+    'rgba(124, 91,255,',   // violet
+    'rgba( 93,228,199,',   // teal
+    'rgba(124,243,255,',   // cyan
+    'rgba(181,155,255,',   // lavender
+    'rgba(255,157,226,',   // pink
+    'rgba(255,255,255,',   // white
   ];
 
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
+  const COUNT = isMob ? 120 : 280;
+  let mx = -9999, my = -9999;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, {passive:true});
+  document.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
 
-    // Dark base
+  class Particle {
+    constructor() { this.reset(true); }
+    reset(anywhere) {
+      this.x  = Math.random() * W;
+      this.y  = anywhere ? Math.random() * H : -10;
+      this.bx = this.x; // base x (for drift back)
+      this.by = this.y;
+      this.w  = 1.5 + Math.random() * 1.5;   // width of dash
+      this.h  = 4   + Math.random() * 6;      // height of dash
+      this.vy = 0.12 + Math.random() * 0.25;  // slow fall speed
+      this.vx = (Math.random() - 0.5) * 0.08;
+      this.ox = 0; this.oy = 0;               // repulsion offset
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.alpha = 0.25 + Math.random() * 0.45;
+      this.angle = (Math.random() - 0.5) * 0.4; // slight tilt
+    }
+
+    update() {
+      // Gravity drift
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // Mouse repulsion — push away, then spring back
+      const dx = this.x - mx;
+      const dy = this.y - my;
+      const d  = Math.sqrt(dx*dx + dy*dy);
+      const RADIUS = 110;
+      if (d < RADIUS && d > 0) {
+        const force = (1 - d / RADIUS) * 3.5;
+        this.ox += (dx/d) * force;
+        this.oy += (dy/d) * force;
+      }
+      // Spring back offset to 0
+      this.ox *= 0.88;
+      this.oy *= 0.88;
+
+      // Wrap vertically
+      if (this.y > H + 10) this.reset(false);
+      // Wrap horizontally
+      if (this.x < -10) this.x = W + 10;
+      if (this.x > W+10) this.x = -10;
+    }
+
+    draw() {
+      const px = this.x + this.ox;
+      const py = this.y + this.oy;
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(this.angle);
+      ctx.fillStyle = this.color + this.alpha + ')';
+      ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
+      ctx.restore();
+    }
+  }
+
+  const particles = Array.from({length: COUNT}, () => new Particle());
+
+  function loop() {
+    // Dark bg
     ctx.fillStyle = '#060414';
     ctx.fillRect(0, 0, W, H);
 
-    // Draw each blob
-    for (const o of orbs) {
-      // Drift position (wraps 0-1)
-      o.x = (o.x + o.vx + 1) % 1;
-      o.y = (o.y + o.vy + 1) % 1;
-
-      const cx = o.x * W;
-      const cy = o.y * H;
-      const radius = o.r * Math.max(W, H);
-
-      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-      const [r,gr,b] = o.color;
-      g.addColorStop(0,   `rgba(${r},${gr},${b},${o.a})`);
-      g.addColorStop(0.4, `rgba(${r},${gr},${b},${(o.a*0.4).toFixed(3)})`);
-      g.addColorStop(1,   `rgba(${r},${gr},${b},0)`);
-
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.fill();
+    for (const p of particles) {
+      p.update();
+      p.draw();
     }
-
-    // Subtle noise grain on top
-    ctx.globalAlpha = 0.018;
-    ctx.fillStyle = 'white';
-    for (let i = 0; i < 800; i++) {
-      ctx.fillRect(
-        Math.random() * W | 0,
-        Math.random() * H | 0,
-        1, 1
-      );
-    }
-    ctx.globalAlpha = 1;
-
-    requestAnimationFrame(draw);
+    requestAnimationFrame(loop);
   }
-
-  draw();
+  loop();
 })();
 
 
@@ -663,43 +690,18 @@ onScroll();
   cards.forEach(c=>{ c.addEventListener('mouseenter',()=>{clearTimeout(lv);act(c);}); c.addEventListener('mouseleave',()=>{lv=setTimeout(()=>act(null),220);}); });
 })();
 
-/* ══ CURSOR — magnetic liquid mercury ══
-   - Inner dot: sharp, snaps to cursor instantly
-   - Outer halo: large ring, lags behind with spring physics
-   - Canvas tail: aurora streak that fades along cursor path
-   - On hover: halo expands + blurs, dot shrinks to a pin
-*/
+/* ══ CURSOR — dot + halo only, no trail ══ */
 if(!isMob&&!noMot){
-  const dot   = document.getElementById('cur-dot');
-  const halo  = document.getElementById('cur-halo');
-  const cvs   = document.getElementById('cur-canvas');
-  const ctx   = cvs.getContext('2d');
-
-  cvs.width = innerWidth; cvs.height = innerHeight;
-  addEventListener('resize',()=>{ cvs.width=innerWidth; cvs.height=innerHeight; });
+  const dot  = document.getElementById('cur-dot');
+  const halo = document.getElementById('cur-halo');
 
   let mx=innerWidth/2, my=innerHeight/2;
-  let hx=mx, hy=my; // halo position (lagged)
-  let vx=0, vy=0;   // halo velocity
-
-  // Trail history for aurora smear
-  const TRAIL = 38;
-  const trail = Array.from({length:TRAIL},()=>({x:mx,y:my}));
-  let trailHead = 0;
-  let hovering = false;
-
-  // Palette: shifts through aurora colors
-  const AURORA = [
-    [124,243,255],   // cyan
-    [124, 91,255],   // violet
-    [181,155,255],   // lavender
-    [255,157,226],   // pink
-    [ 93,228,199],   // teal
-  ];
+  let hx=mx, hy=my;
+  let vx=0, vy=0;
+  let hovering=false;
 
   addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; },{passive:true});
 
-  // Hover magnetism on interactive elements
   document.querySelectorAll('a,button,.kcard,.card,.ct-lnk').forEach(el=>{
     el.addEventListener('mouseenter',()=>{
       hovering=true;
@@ -707,7 +709,6 @@ if(!isMob&&!noMot){
       halo.style.borderColor='rgba(124,91,255,.55)';
       halo.style.background='rgba(124,91,255,.06)';
       dot.style.width='6px'; dot.style.height='6px';
-      dot.style.boxShadow='0 0 22px rgba(124,243,255,.9),0 0 8px rgba(124,91,255,.7)';
     });
     el.addEventListener('mouseleave',()=>{
       hovering=false;
@@ -715,18 +716,13 @@ if(!isMob&&!noMot){
       halo.style.borderColor='rgba(124,91,255,.35)';
       halo.style.background='';
       dot.style.width='10px'; dot.style.height='10px';
-      dot.style.boxShadow='0 0 18px rgba(124,243,255,.7),0 0 6px rgba(124,91,255,.5)';
     });
   });
 
-  function lerp(a,b,t){ return a+(b-a)*t; }
-
   function animCursor(){
-    // Dot: instant
-    dot.style.left  = mx+'px';
-    dot.style.top   = my+'px';
+    dot.style.left = mx+'px';
+    dot.style.top  = my+'px';
 
-    // Halo: spring physics
     const stiffness = hovering ? 0.18 : 0.12;
     const damping   = 0.72;
     vx = vx*damping + (mx-hx)*stiffness;
@@ -735,34 +731,8 @@ if(!isMob&&!noMot){
     halo.style.left = hx+'px';
     halo.style.top  = hy+'px';
 
-    // Aurora trail on canvas
-    trail[trailHead] = {x:mx, y:my};
-    trailHead = (trailHead+1) % TRAIL;
-
-    ctx.clearRect(0,0,cvs.width,cvs.height);
-
-    // Draw smeared aurora path
-    for(let i=1;i<TRAIL;i++){
-      const idx  = (trailHead+i) % TRAIL;
-      const prev = (trailHead+i-1) % TRAIL;
-      const t    = i/TRAIL; // 0=oldest, 1=newest
-      const ci   = Math.floor(t * AURORA.length) % AURORA.length;
-      const [r,g,b] = AURORA[ci];
-      const alpha  = t * t * 0.55;
-      const width  = t * (hovering ? 9 : 6);
-
-      ctx.beginPath();
-      ctx.moveTo(trail[prev].x, trail[prev].y);
-      ctx.lineTo(trail[idx].x, trail[idx].y);
-      ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
-      ctx.lineWidth   = width;
-      ctx.lineCap     = 'round';
-      ctx.stroke();
-    }
-
     requestAnimationFrame(animCursor);
   }
-
   animCursor();
 }
 
